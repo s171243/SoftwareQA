@@ -15,6 +15,7 @@ public class Server {
 		try {
 			server = new ServerSocket(port);
 			System.out.println("Server has been initialised on port " + port);
+			System.out.println("test");
 		}
 		catch (IOException e) {
 			System.err.println("error initialising server");
@@ -25,6 +26,7 @@ public class Server {
 				Connection c = null;
 				try {
 					c = new Connection(server.accept(), this);
+					System.out.println("A connection has probably been set up");
 				}
 				catch (IOException e) {
 					System.err.println("error setting up new client conneciton");

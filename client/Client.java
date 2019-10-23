@@ -5,15 +5,23 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client
-{
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+public class Client extends Application {
 
     private static Socket socket;
 
-    public static void main(String args[])
-    {
-        try
-        {
+    public static void main(String args[]) {
+
+        launch(args);
+
+        try {
             String host = "localhost";
             int port = 9000;
             Scanner myScanner = new Scanner(System.in);
@@ -39,10 +47,10 @@ public class Client
             //String message = br.readLine();
             //System.out.println("Message received from the server : " + message);
 
-            while(true){
+            while (true) {
                 String msg = myScanner.nextLine();
 
-                if(msg.equals("QUIT")){
+                if (msg.equals("QUIT")) {
                     socket.close();
                     break;
                 }
@@ -52,22 +60,34 @@ public class Client
                 String response = br.readLine();
                 System.out.println("Message received from the server : " + response);
             }
-        }
-        catch (Exception exception)
-        {
+        } catch (Exception exception) {
             exception.printStackTrace();
-        }
-        finally
-        {
+        } finally {
             //Closing the socket
-            try
-            {
+            try {
                 socket.close();
-            }
-            catch(Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Hello World!");
+        Button btn = new Button();
+        btn.setText("Say 'Hello World'");
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Hello World!");
+            }
+        });
+
+        StackPane root = new StackPane();
+        root.getChildren().add(btn);
+        primaryStage.setScene(new Scene(root, 300, 250));
+        primaryStage.show();
     }
 }

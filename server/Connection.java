@@ -38,11 +38,12 @@ public class Connection implements Runnable {
 			System.exit(-1);
 		}
 		running = true;
-		this.sendOverConnection("OK Welcome to the chat server, there are currelty " + serverReference.getNumberOfUsers() + " user(s) online");
+		System.out.println("The connection is working");
+		this.sendOverConnection("OK Welcome to the chat server, there are currently " + serverReference.getNumberOfUsers() + " user(s) online");
 		while(running) {
 			try {
 				line = in.readLine();
-				validateMessage(line);	
+				validateMessage(line);
 			} catch (IOException e) {
 				System.out.println("Read failed");
 				System.exit(-1);
@@ -51,8 +52,9 @@ public class Connection implements Runnable {
 	}
 	
 	private void validateMessage(String message) {
-		
+		System.out.println(message);
 		if(message.length() < 4){
+			System.out.println(message.length());
 			sendOverConnection ("BAD invalid command to server");
 		} else {
 			switch(message.substring(0,4)){
