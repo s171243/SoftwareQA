@@ -46,8 +46,7 @@ public class Client
                     socket.close();
                     break;
                 }
-                //String msg =  + "\n";
-                bw.println(msg + "\n");
+                bw.println(msg);
                 System.out.println("Message sent to the server : " + msg);
                 bw.flush();
                 String response = br.readLine();
