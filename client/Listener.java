@@ -83,6 +83,7 @@ public class Listener extends Thread {
             @Override
             public void run() {
                 g.setUpRight(finalList);
+                g.setUpBottom(finalList);
             }
         });
         // g.setUpCenter(list);

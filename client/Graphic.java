@@ -1,10 +1,9 @@
 package client;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
@@ -81,10 +80,14 @@ public class Graphic {
         btn.setPrefHeight(100);
 
         TextField bottom = new TextField();
-        bottom.setPrefWidth(400);
+        bottom.setPrefWidth(300);
         bottom.setPrefHeight(100);
         bottom.setPromptText("Write your message");
 
+        ComboBox user = new ComboBox();
+        user.setPrefWidth(100);
+        user.setPrefHeight(100);
+        user.setPromptText("Recipient");
 
         bottom.setOnAction(e -> {
             sendMessage("MESG " + bottom.getText());
@@ -96,7 +99,41 @@ public class Graphic {
         });
 
         HBox bottomFrame = new HBox(2);
-        bottomFrame.getChildren().addAll(bottom, btn);
+        bottomFrame.getChildren().addAll(user, bottom, btn);
+        root.setBottom(bottomFrame);
+        return root;
+    }
+
+    public BorderPane setUpBottom(String[] list){
+        //bottom
+        Button btn = new Button("Submit");
+        btn.setPrefWidth(100);
+        btn.setPrefHeight(100);
+
+        TextField bottom = new TextField();
+        bottom.setPrefWidth(300);
+        bottom.setPrefHeight(100);
+        bottom.setPromptText("Write your message");
+
+        ComboBox<String> user = new ComboBox<>();
+        user.setPrefWidth(100);
+        user.setPrefHeight(100);
+        user.setPromptText("Recipient");
+        for (String recipient : list){
+            user.getItems().add(recipient);
+        }
+
+        bottom.setOnAction(e -> {
+            sendMessage("MESG " + user.getValue() + " " + bottom.getText());
+            bottom.setText("");
+        });
+        btn.setOnAction(e -> {
+            sendMessage("MESG " + user.getValue() + " " + bottom.getText());
+            bottom.setText("");
+        });
+
+        HBox bottomFrame = new HBox(2);
+        bottomFrame.getChildren().addAll(user, bottom, btn);
         root.setBottom(bottomFrame);
         return root;
     }
