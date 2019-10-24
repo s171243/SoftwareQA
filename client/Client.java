@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -20,12 +19,16 @@ public class Client extends Application {
     private static Socket socket;
     private Thread listener;
     private Thread sender;
-    private static PrintWriter bw;
+    private static PrintWriter writer;
     private static BufferedReader br;
     private Graphic g;
 
     public static void main(String args[]) {
         launch(args);
+    }
+
+    public static PrintWriter getWriter(){
+        return writer;
     }
 
     @Override
@@ -43,13 +46,13 @@ public class Client extends Application {
             //Send the message to the server
             OutputStream os = socket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);
-            bw = new PrintWriter(osw);
+            writer = new PrintWriter(osw);
 
             String number = "LIST";
 
             String sendMessage = "I am connected";
-            bw.println(sendMessage);
-            bw.flush();
+            writer.println(sendMessage);
+            writer.flush();
 
             //Get the return message from the server
             InputStream is = socket.getInputStream();
@@ -60,7 +63,7 @@ public class Client extends Application {
 
             // create a new thread object
             Thread listener = new Listener(br, g);
-            Thread sender = new Sender(bw, g);
+            Thread sender = new Sender(writer, g);
 
             // Invoking the start() method
             listener.start();
@@ -69,27 +72,6 @@ public class Client extends Application {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-
-
-        /*
-        BorderPane root = new BorderPane();
-
-        primaryStage.setTitle("Hello World!");
-
-        //bottom
-        root = setUpBottom(root);
-
-        //right
-        String[] names = {"a", "b", "c", "d"};
-        root = setUpRight(root, names);
-
-        // center
-        String[] messages = {"Hello, world!", "The world says hello back", "Oh wow - I never tried that!", "Yeah. That's life"};
-        root = setUpCenter(root, messages);
-        primaryStage.setScene(new Scene(root, 500, 500));
-        primaryStage.show();
-
-        */
     }
 
     public static BorderPane setUpBottom(BorderPane root){

@@ -1,5 +1,7 @@
 package client;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,6 +19,7 @@ public class Graphic {
     public Graphic(Stage primaryStage){
         this.stage = primaryStage;
     }
+
 
     public void setup(){
         stage.setTitle("Hello World!");
@@ -47,11 +50,27 @@ public class Graphic {
         bottom.setPrefHeight(100);
         bottom.setPromptText("Write your message");
 
+
+        bottom.setOnAction(e -> {
+            sendMessage(bottom.getText());
+            bottom.setText("");
+        });
+        btn.setOnAction(e -> {
+            sendMessage(bottom.getText());
+            bottom.setText("");
+        });
+
         HBox bottomFrame = new HBox(2);
         bottomFrame.getChildren().addAll(bottom, btn);
         root.setBottom(bottomFrame);
         return root;
     }
+
+    public void sendMessage(String msg){
+        Client.getWriter().println(msg);
+        Client.getWriter().flush();
+    }
+
 
     public BorderPane setUpRight(String[] names){
         Label heading = new Label("Online users");
