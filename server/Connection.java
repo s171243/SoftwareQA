@@ -83,7 +83,7 @@ public class Connection implements Runnable {
 					break;
 				
 				default:
-					sendOverConnection("BAD command not recognised");
+					sendOverConnection("BAD command not recognised: " + message);
 					break;
 			}
 		}
@@ -112,7 +112,7 @@ public class Connection implements Runnable {
 				for(String s: userList) {
 					userListString += s + ", ";
 				}
-				sendOverConnection("OK " + userListString);
+				sendOverConnection("OK, the following users are online " + userListString);
 				break;
 			
 			case STATE_UNREGISTERED:

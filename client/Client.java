@@ -3,6 +3,7 @@ package client;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import javafx.application.Application;
@@ -23,7 +24,7 @@ public class Client extends Application {
 
     public static void main(String args[]) {
 
-        launch(args);
+
 
         try {
             String host = "localhost";
@@ -39,17 +40,18 @@ public class Client extends Application {
 
             String number = "LIST";
 
-            //String sendMessage = number + "\n";
-            //bw.write(sendMessage);
-            //bw.flush();
-            //System.out.println("Message sent to the server : " + sendMessage);
+            String sendMessage = "I am connected";
+            bw.println(sendMessage);
+            bw.flush();
+            System.out.println("Message sent to the server : " + sendMessage);
 
             //Get the return message from the server
             InputStream is = socket.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
-            //String message = br.readLine();
-            //System.out.println("Message received from the server : " + message);
+            String message = br.readLine();
+            br.readLine();
+            System.out.println("Message received from the server : " + message);
 
             while (true) {
                 String msg = myScanner.nextLine();
@@ -74,6 +76,38 @@ public class Client extends Application {
                 e.printStackTrace();
             }
         }
+
+        launch(args);
+    }
+
+    public void validateMessage(String msg){
+        // receive
+        if(msg.startsWith("Broadcast from")){
+            msg.substring(14);
+        }
+
+        // connected
+        if(msg.startsWith("OK Welcome to the chat server")){
+
+        }
+
+        //listing
+        if(msg.startsWith("OK, the following users are online")){
+            msg.substring(34);
+        }
+    }
+
+    public void receive(String msg){
+        System.out.println("Message received: " + msg);
+    }
+
+    public void connected(){
+        System.out.println("We are online");
+    }
+
+    public void listing(String msg){
+        String[] list = msg.split(",");
+        System.out.println(Arrays.toString(list));
     }
 
     @Override
