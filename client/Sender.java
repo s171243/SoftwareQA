@@ -26,10 +26,16 @@ public class Sender extends Thread {
     public void run() {
         String response = null;
         while(true) {
-            String msg = myScanner.nextLine();
+            try {
+                sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-            pw.println(msg);
-            pw.flush();
+            if (Client.getLoggedIn()){
+                pw.println("LIST");
+                pw.flush();
+            }
         }
     }
 }

@@ -22,6 +22,7 @@ public class Client extends Application {
     private static PrintWriter writer;
     private static BufferedReader br;
     private Graphic g;
+    private static Boolean loggedIn = false;
 
     public static void main(String args[]) {
         launch(args);
@@ -130,5 +131,13 @@ public class Client extends Application {
 
         root.setCenter(center);
         return root;
+    }
+
+    public static void setLoggedIn(Boolean loggedIn) {
+        Client.loggedIn = loggedIn;
+    }
+
+    public static Boolean getLoggedIn() {
+        return loggedIn;
     }
 }

@@ -92,6 +92,7 @@ public class Listener extends Thread {
 
     public static void loggedIn(String msg){
         System.out.println("We are logged in with username " + msg);
+        Client.setLoggedIn(true);
     }
 
     @Override
