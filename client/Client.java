@@ -64,6 +64,7 @@ public class Client extends Application {
                 System.out.println("Message sent to the server : " + msg);
                 bw.flush();
                 String response = br.readLine();
+                validateMessage(response);
                 System.out.println("Message received from the server : " + response);
             }
         } catch (Exception exception) {
@@ -80,34 +81,56 @@ public class Client extends Application {
         launch(args);
     }
 
-    public void validateMessage(String msg){
+    public static void validateMessage(String msg){
         // receive
         if(msg.startsWith("Broadcast from")){
-            msg.substring(14);
+            receive(msg.substring(14));
         }
 
         // connected
-        if(msg.startsWith("OK Welcome to the chat server")){
+        else if(msg.startsWith("OK Welcome to the chat server,")){
+            connected();
+        }
 
+        // receive
+        else if(msg.startsWith("PM from ")){
+            pm(msg.substring(8));
         }
 
         //listing
-        if(msg.startsWith("OK, the following users are online")){
-            msg.substring(34);
+        else if(msg.startsWith("OK, the following users are online")){
+            listing(msg.substring(35));
+        }
+
+        else if(msg.startsWith("OK Welcome to the chat server")){
+            loggedIn(msg.substring(30));
+        }
+
+        else {
+            System.out.println("I AM CONFUSED");
         }
     }
 
-    public void receive(String msg){
+    public static void receive(String msg){
         System.out.println("Message received: " + msg);
     }
 
-    public void connected(){
+    public static void pm(String msg){
+        System.out.println("PM received: " + msg);
+    }
+
+    public static void connected(){
         System.out.println("We are online");
     }
 
-    public void listing(String msg){
+    public static void listing(String msg){
         String[] list = msg.split(",");
+        list = Arrays.copyOf(list, list.length-1);
         System.out.println(Arrays.toString(list));
+    }
+
+    public static void loggedIn(String msg){
+        System.out.println("We are logged in with username " + msg);
     }
 
     @Override
