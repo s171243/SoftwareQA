@@ -1,21 +1,28 @@
 package client;
 
+import javafx.application.Platform;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class ClientListener extends Thread {
+public class Listener extends Thread {
 
+    private Graphic g;
     BufferedReader br;
     Scanner myScanner = new Scanner(System.in);
+    static BorderPane root;
 
     // Constructor
-    public ClientListener(BufferedReader br) {
+    public Listener(BufferedReader br, Graphic g) {
         this.br = br;
+        this.g = g;
     }
 
-    public static void validateMessage(String msg){
+    public void validateMessage(String msg){
         // receive
         if(msg.startsWith("Broadcast from")){
             receive(msg.substring(14));
@@ -69,10 +76,18 @@ public class ClientListener extends Thread {
         System.out.println("Message sent");
     }
 
-    public static void listing(String msg){
+    public void listing(String msg){
         String[] list = msg.split(",");
         list = Arrays.copyOf(list, list.length-1);
         System.out.println(Arrays.toString(list));
+        String[] finalList = list;
+        Platform.runLater(new Runnable(){
+            @Override
+            public void run() {
+                g.setUpRight(finalList);
+            }
+        });
+        // g.setUpCenter(list);
     }
 
     public static void loggedIn(String msg){

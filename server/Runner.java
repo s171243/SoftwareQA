@@ -1,4 +1,4 @@
-package g53sqm.chat.server;
+package server;
 
 
 public class Runner

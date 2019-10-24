@@ -3,12 +3,9 @@ package client;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -21,8 +18,21 @@ import javafx.stage.Stage;
 public class Client extends Application {
 
     private static Socket socket;
+    private Thread listener;
+    private Thread sender;
+    private static PrintWriter bw;
+    private static BufferedReader br;
+    private Graphic g;
 
     public static void main(String args[]) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        g = new Graphic(primaryStage);
+        g.setup();
+
         try {
             String host = "localhost";
             int port = 9000;
@@ -33,14 +43,13 @@ public class Client extends Application {
             //Send the message to the server
             OutputStream os = socket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);
-            PrintWriter bw = new PrintWriter(osw);
+            bw = new PrintWriter(osw);
 
             String number = "LIST";
 
             String sendMessage = "I am connected";
             bw.println(sendMessage);
             bw.flush();
-            System.out.println("Me: " + sendMessage);
 
             //Get the return message from the server
             InputStream is = socket.getInputStream();
@@ -48,38 +57,23 @@ public class Client extends Application {
             BufferedReader br = new BufferedReader(isr);
             String message = br.readLine();
             br.readLine();
-            System.out.println("Server: " + message);
 
             // create a new thread object
-            Thread t = new ClientListener(br);
+            Thread listener = new Listener(br, g);
+            Thread sender = new Sender(bw, g);
 
             // Invoking the start() method
-            t.start();
-
-            Thread sender = new Sender(bw);
-
+            listener.start();
             sender.start();
+
         } catch (Exception exception) {
             exception.printStackTrace();
-        } finally {
-            //Closing the socket
-            /*
-            try {
-                socket.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            
-             */
         }
 
-        launch(args);
-    }
 
-    @Override
-    public void start(Stage primaryStage) {
-
+        /*
         BorderPane root = new BorderPane();
+
         primaryStage.setTitle("Hello World!");
 
         //bottom
@@ -92,9 +86,10 @@ public class Client extends Application {
         // center
         String[] messages = {"Hello, world!", "The world says hello back", "Oh wow - I never tried that!", "Yeah. That's life"};
         root = setUpCenter(root, messages);
-
         primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.show();
+
+        */
     }
 
     public static BorderPane setUpBottom(BorderPane root){
