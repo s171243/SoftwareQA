@@ -16,8 +16,6 @@ public class ClientListener extends Thread {
     }
 
     public static void validateMessage(String msg){
-        System.out.println(msg);
-
         // receive
         if(msg.startsWith("Broadcast from")){
             receive(msg.substring(14));
@@ -44,6 +42,10 @@ public class ClientListener extends Thread {
 
         else if (msg.startsWith("OK your message has been sent")){
             sent();
+        }
+
+        else if (msg.equals("")){
+            //System.out.println("No message");
         }
 
         else {
