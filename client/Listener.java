@@ -77,7 +77,7 @@ public class Listener extends Thread {
     public void listing(String msg) {
         String[] list = msg.split(",");
         list = Arrays.copyOf(list, list.length - 1);
-        System.out.println(Arrays.toString(list));
+        // System.out.println(Arrays.toString(list));
         String[] finalList = list;
         Platform.runLater(new Runnable() {
             @Override
@@ -88,9 +88,15 @@ public class Listener extends Thread {
         // g.setUpCenter(list);
     }
 
-    public static void loggedIn(String msg) {
+    public void loggedIn(String msg) {
         System.out.println("We are logged in with username " + msg);
         Client.setLoggedIn(true);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                g.emptyTop();
+            }
+        });
     }
 
     @Override

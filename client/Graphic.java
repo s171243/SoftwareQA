@@ -29,8 +29,11 @@ public class Graphic {
         //bottom
         root = setUpBottom();
 
+        //top
+        root = setUpTop();
+
         //right
-        String[] names = {"a", "b", "c", "d"};
+        String[] names = {"You're not logged in"};
         root = setUpRight(names);
 
         // center
@@ -39,6 +42,36 @@ public class Graphic {
 
         stage.setScene(new Scene(root, 500, 500));
         stage.show();
+    }
+
+    private BorderPane setUpTop() {
+        //bottom
+        Button btn = new Button("Login");
+        btn.setPrefWidth(100);
+        btn.setPrefHeight(50);
+
+        TextField top = new TextField();
+        top.setPrefWidth(400);
+        top.setPrefHeight(50);
+        top.setPromptText("What is your username?");
+
+        top.setOnAction(e -> {
+            sendMessage("IDEN " + top.getText());
+            top.setText("");
+        });
+        btn.setOnAction(e -> {
+            sendMessage("IDEN " + top.getText());
+            top.setText("");
+        });
+
+        HBox bottomFrame = new HBox(2);
+        bottomFrame.getChildren().addAll(top, btn);
+        root.setTop(bottomFrame);
+        return root;
+    }
+
+    public void emptyTop(){
+        root.setTop(null);
     }
 
     public BorderPane setUpBottom(){
@@ -54,11 +87,11 @@ public class Graphic {
 
 
         bottom.setOnAction(e -> {
-            sendMessage(bottom.getText());
+            sendMessage("MESG " + bottom.getText());
             bottom.setText("");
         });
         btn.setOnAction(e -> {
-            sendMessage(bottom.getText());
+            sendMessage("MESG " + bottom.getText());
             bottom.setText("");
         });
 
