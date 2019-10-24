@@ -27,7 +27,7 @@ public class Sender extends Thread {
         String response = null;
         while(true) {
             try {
-                sleep(20000);
+                sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

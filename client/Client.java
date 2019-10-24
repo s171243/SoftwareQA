@@ -28,6 +28,7 @@ public class Client extends Application {
     private Graphic g;
     private static Boolean loggedIn = false;
     private static ArrayList<String> messages = new ArrayList<String>();
+    private static String[] users;
 
     public static void main(String args[]) {
         launch(args);
@@ -45,6 +46,13 @@ public class Client extends Application {
         Client.messages.add(message);
     }
 
+    public static String[] getUsers() {
+        return users;
+    }
+
+    public static void setUsers(String[] users) {
+        Client.users = users;
+    }
 
     @Override
     public void start(Stage primaryStage) {

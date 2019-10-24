@@ -48,7 +48,7 @@ public class Listener extends Thread {
         } else if (msg.equals("")) {
             //System.out.println("No message");
         } else {
-            System.out.println("I AM CONFUSED");
+            System.out.println("ehh... " + msg);
         }
     }
 
@@ -77,15 +77,23 @@ public class Listener extends Thread {
     public void listing(String msg) {
         String[] list = msg.split(",");
         list = Arrays.copyOf(list, list.length - 1);
+        for (int i = 0; i < list.length; i++) {
+            list[i] = list[i].trim();
+        }
         // System.out.println(Arrays.toString(list));
         String[] finalList = list;
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                g.setUpRight(finalList);
-                g.setUpBottom(finalList);
-            }
-        });
+
+        if(!Arrays.equals(list, Client.getUsers())){
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    g.setUpBottom(finalList);
+                    g.setUpRight(finalList);
+                }
+            });
+        }
+
+        Client.setUsers(finalList);
         // g.setUpCenter(list);
     }
 
