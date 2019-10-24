@@ -56,22 +56,21 @@ public class Client extends Application {
             // Invoking the start() method
             t.start();
 
-            while (true) {
-                String msg = myScanner.nextLine();
+            Thread sender = new Sender(bw);
 
-                bw.println(msg);
-                // System.out.println("Me: " + msg);
-                bw.flush();
-            }
+            sender.start();
         } catch (Exception exception) {
             exception.printStackTrace();
         } finally {
             //Closing the socket
+            /*
             try {
                 socket.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            
+             */
         }
 
         launch(args);
@@ -84,6 +83,22 @@ public class Client extends Application {
         primaryStage.setTitle("Hello World!");
 
         //bottom
+        root = setUpBottom(root);
+
+        //right
+        String[] names = {"a", "b", "c", "d"};
+        root = setUpRight(root, names);
+
+        // center
+        String[] messages = {"Hello, world!", "The world says hello back", "Oh wow - I never tried that!", "Yeah. That's life"};
+        root = setUpCenter(root, messages);
+
+        primaryStage.setScene(new Scene(root, 500, 500));
+        primaryStage.show();
+    }
+
+    public static BorderPane setUpBottom(BorderPane root){
+        //bottom
         Button btn = new Button("Submit");
         btn.setPrefWidth(100);
         btn.setPrefHeight(100);
@@ -91,56 +106,52 @@ public class Client extends Application {
         TextField bottom = new TextField();
         bottom.setPrefWidth(400);
         bottom.setPrefHeight(100);
-        bottom.setPromptText("This is a test");
+        bottom.setPromptText("Write your message");
 
         HBox bottomFrame = new HBox(2);
         bottomFrame.getChildren().addAll(bottom, btn);
         root.setBottom(bottomFrame);
+        return root;
+    }
 
-        //right
-        Label label = new Label("Online users");
-        label.setStyle("-fx-font-weight: bold");
-        label.setPadding(new Insets(10, 10, 10, 10));
-
-        Label label2 = new Label("User 1");
-        label.setPadding(new Insets(10, 10, 10, 10));
-
-        Label label3 = new Label("User 2");
-        label.setPadding(new Insets(10, 10, 10, 10));
-
-        Label label4 = new Label("User 3");
-        label.setPadding(new Insets(10, 10, 10, 10));
+    public static BorderPane setUpRight(BorderPane root, String[] names){
+        Label heading = new Label("Online users");
+        heading.setStyle("-fx-font-weight: bold");
+        heading.setPadding(new Insets(10, 10, 10, 10));
 
         VBox vbox = new VBox(10);
-        vbox.getChildren().addAll(label, label2, label3, label4);
+        vbox.getChildren().add(heading);
+
+        for (String name : names){
+            Label label = new Label(name);
+            vbox.getChildren().add(label);
+        }
+
         vbox.setPadding(new Insets(20, 10, 20, 20));
         vbox.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
 
         root.setRight(vbox);
+        return root;
+    }
 
-        // center
+    public static BorderPane setUpCenter(BorderPane root, String[] messages){
         VBox center = new VBox(10);
 
-        Label label5 = new Label("Chat");
-        label5.setStyle("-fx-font-weight: bold");
-        label.setPadding(new Insets(10, 10, 10, 10));
+        Label heading = new Label("Chat");
+        heading.setStyle("-fx-font-weight: bold");
+        heading.setPadding(new Insets(10, 10, 10, 10));
 
-        Label label6 = new Label("Message");
-        label.setPadding(new Insets(10, 10, 10, 10));
+        center.getChildren().add(heading);
 
-        Label label7 = new Label("Message");
-        label.setPadding(new Insets(10, 10, 10, 10));
+        for(String message : messages){
+            Label label = new Label(message);
+            label.setPadding(new Insets(10, 10, 10, 10));
+            center.getChildren().add(label);
+        }
 
-        Label label8 = new Label("Message");
-        label.setPadding(new Insets(10, 10, 10, 10));
+        center.setPadding(new Insets(50, 10, 50, 20));
 
-        VBox centerBox = new VBox(10);
-        centerBox.getChildren().addAll(label5, label6, label7, label8);
-        centerBox.setPadding(new Insets(50, 10, 50, 20));
-
-        root.setCenter(centerBox);
-
-        primaryStage.setScene(new Scene(root, 500, 500));
-        primaryStage.show();
+        root.setCenter(center);
+        return root;
     }
 }
