@@ -3,9 +3,11 @@ package client;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,6 +15,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
+import static java.lang.Thread.sleep;
 
 public class Client extends Application {
 
@@ -23,6 +27,7 @@ public class Client extends Application {
     private static BufferedReader br;
     private Graphic g;
     private static Boolean loggedIn = false;
+    private static ArrayList<String> messages = new ArrayList<String>();
 
     public static void main(String args[]) {
         launch(args);
@@ -31,6 +36,15 @@ public class Client extends Application {
     public static PrintWriter getWriter(){
         return writer;
     }
+
+    public static ArrayList<String> getMessages() {
+        return messages;
+    }
+
+    public static void addMessages(String message) {
+        Client.messages.add(message);
+    }
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -73,64 +87,6 @@ public class Client extends Application {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
-    }
-
-    public static BorderPane setUpBottom(BorderPane root){
-        //bottom
-        Button btn = new Button("Submit");
-        btn.setPrefWidth(100);
-        btn.setPrefHeight(100);
-
-        TextField bottom = new TextField();
-        bottom.setPrefWidth(400);
-        bottom.setPrefHeight(100);
-        bottom.setPromptText("Write your message");
-
-        HBox bottomFrame = new HBox(2);
-        bottomFrame.getChildren().addAll(bottom, btn);
-        root.setBottom(bottomFrame);
-        return root;
-    }
-
-    public static BorderPane setUpRight(BorderPane root, String[] names){
-        Label heading = new Label("Online users");
-        heading.setStyle("-fx-font-weight: bold");
-        heading.setPadding(new Insets(10, 10, 10, 10));
-
-        VBox vbox = new VBox(10);
-        vbox.getChildren().add(heading);
-
-        for (String name : names){
-            Label label = new Label(name);
-            vbox.getChildren().add(label);
-        }
-
-        vbox.setPadding(new Insets(20, 10, 20, 20));
-        vbox.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
-
-        root.setRight(vbox);
-        return root;
-    }
-
-    public static BorderPane setUpCenter(BorderPane root, String[] messages){
-        VBox center = new VBox(10);
-
-        Label heading = new Label("Chat");
-        heading.setStyle("-fx-font-weight: bold");
-        heading.setPadding(new Insets(10, 10, 10, 10));
-
-        center.getChildren().add(heading);
-
-        for(String message : messages){
-            Label label = new Label(message);
-            label.setPadding(new Insets(10, 10, 10, 10));
-            center.getChildren().add(label);
-        }
-
-        center.setPadding(new Insets(50, 10, 50, 20));
-
-        root.setCenter(center);
-        return root;
     }
 
     public static void setLoggedIn(Boolean loggedIn) {

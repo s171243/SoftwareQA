@@ -22,66 +22,64 @@ public class Listener extends Thread {
         this.g = g;
     }
 
-    public void validateMessage(String msg){
+    public void validateMessage(String msg) {
         // receive
-        if(msg.startsWith("Broadcast from")){
+        if (msg.startsWith("Broadcast from")) {
             receive(msg.substring(14));
         }
 
         // connected
-        else if(msg.startsWith("OK Welcome to the chat server,")){
+        else if (msg.startsWith("OK Welcome to the chat server,")) {
             connected();
         }
 
         // receive
-        else if(msg.startsWith("PM from")){
+        else if (msg.startsWith("PM from")) {
             pm(msg.substring(8));
         }
 
         //listing
-        else if(msg.startsWith("OK, the following users are online")){
+        else if (msg.startsWith("OK, the following users are online")) {
             listing(msg.substring(35));
-        }
-
-        else if(msg.startsWith("OK Welcome to the chat server")){
+        } else if (msg.startsWith("OK Welcome to the chat server")) {
             loggedIn(msg.substring(30));
-        }
-
-        else if (msg.startsWith("OK your message has been sent")){
+        } else if (msg.startsWith("OK your message has been sent")) {
             sent();
-        }
-
-        else if (msg.equals("")){
+        } else if (msg.equals("")) {
             //System.out.println("No message");
-        }
-
-        else {
+        } else {
             System.out.println("I AM CONFUSED");
         }
     }
 
-    public static void receive(String msg){
+    public static void receive(String msg) {
         System.out.println("Message received: " + msg);
     }
 
-    public static void pm(String msg){
-        System.out.println("PM received: " + msg);
+    public void pm(String msg) {
+        Client.addMessages(msg);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                g.setUpCenter(Client.getMessages());
+            }
+        });
     }
 
-    public static void connected(){
+    public static void connected() {
         System.out.println("We are online");
     }
 
-    public static void sent(){
+    public static void sent() {
         System.out.println("Message sent");
     }
 
-    public void listing(String msg){
+    public void listing(String msg) {
         String[] list = msg.split(",");
-        list = Arrays.copyOf(list, list.length-1);
+        list = Arrays.copyOf(list, list.length - 1);
         System.out.println(Arrays.toString(list));
         String[] finalList = list;
-        Platform.runLater(new Runnable(){
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 g.setUpRight(finalList);
@@ -90,7 +88,7 @@ public class Listener extends Thread {
         // g.setUpCenter(list);
     }
 
-    public static void loggedIn(String msg){
+    public static void loggedIn(String msg) {
         System.out.println("We are logged in with username " + msg);
         Client.setLoggedIn(true);
     }
@@ -98,7 +96,7 @@ public class Listener extends Thread {
     @Override
     public void run() {
         String response = null;
-        while(true) {
+        while (true) {
             try {
                 response = br.readLine();
                 validateMessage(response);

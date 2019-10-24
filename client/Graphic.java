@@ -11,6 +11,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+
 public class Graphic {
 
     private Stage stage;
@@ -33,7 +35,7 @@ public class Graphic {
 
         // center
         String[] messages = {"Hello, world!", "The world says hello back", "Oh wow - I never tried that!", "Yeah. That's life"};
-        root = setUpCenter(messages);
+        root = setUpCenter(Client.getMessages());
 
         stage.setScene(new Scene(root, 500, 500));
         stage.show();
@@ -93,6 +95,27 @@ public class Graphic {
     }
 
     public BorderPane setUpCenter(String[] messages){
+        VBox center = new VBox(10);
+
+        Label heading = new Label("Chat");
+        heading.setStyle("-fx-font-weight: bold");
+        heading.setPadding(new Insets(10, 10, 10, 10));
+
+        center.getChildren().add(heading);
+
+        for(String message : messages){
+            Label label = new Label(message);
+            label.setPadding(new Insets(10, 10, 10, 10));
+            center.getChildren().add(label);
+        }
+
+        center.setPadding(new Insets(50, 10, 50, 20));
+
+        root.setCenter(center);
+        return root;
+    }
+
+    public BorderPane setUpCenter(ArrayList<String> messages){
         VBox center = new VBox(10);
 
         Label heading = new Label("Chat");
