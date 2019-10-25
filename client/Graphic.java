@@ -138,6 +138,42 @@ public class Graphic {
         return root;
     }
 
+    public BorderPane setUpBottom(String[] list, String username){
+        //bottom
+        Button btn = new Button("Submit");
+        btn.setPrefWidth(100);
+        btn.setPrefHeight(100);
+
+        TextField bottom = new TextField();
+        bottom.setPrefWidth(300);
+        bottom.setPrefHeight(100);
+        bottom.setPromptText("Write your message");
+
+        ComboBox<String> user = new ComboBox<>();
+        user.setPrefWidth(100);
+        user.setPrefHeight(100);
+        user.setPromptText("Recipient");
+        for (String recipient : list){
+            if(!username.equals(recipient)) {
+                user.getItems().add(recipient);
+            }
+        }
+
+        bottom.setOnAction(e -> {
+            sendMessage("MESG " + user.getValue() + " " + bottom.getText());
+            bottom.setText("");
+        });
+        btn.setOnAction(e -> {
+            sendMessage("MESG " + user.getValue() + " " + bottom.getText());
+            bottom.setText("");
+        });
+
+        HBox bottomFrame = new HBox(2);
+        bottomFrame.getChildren().addAll(user, bottom, btn);
+        root.setBottom(bottomFrame);
+        return root;
+    }
+
     public void sendMessage(String msg){
         Client.getWriter().println(msg);
         Client.getWriter().flush();

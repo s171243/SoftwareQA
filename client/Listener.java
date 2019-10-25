@@ -87,7 +87,7 @@ public class Listener extends Thread {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    g.setUpBottom(finalList);
+                    g.setUpBottom(finalList, Client.getUsername());
                     g.setUpRight(finalList);
                 }
             });
@@ -99,6 +99,7 @@ public class Listener extends Thread {
 
     public void loggedIn(String msg) {
         System.out.println("We are logged in with username " + msg);
+        Client.setUsername(msg);
         Client.setLoggedIn(true);
         Platform.runLater(new Runnable() {
             @Override

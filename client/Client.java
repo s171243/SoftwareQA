@@ -29,6 +29,7 @@ public class Client extends Application {
     private static Boolean loggedIn = false;
     private static ArrayList<String> messages = new ArrayList<String>();
     private static String[] users;
+    private static String username;
 
     public static void main(String args[]) {
         launch(args);
@@ -52,6 +53,14 @@ public class Client extends Application {
 
     public static void setUsers(String[] users) {
         Client.users = users;
+    }
+
+    public static String getUsername() {
+        return username;
+    }
+
+    public static void setUsername(String username) {
+        Client.username = username;
     }
 
     @Override
