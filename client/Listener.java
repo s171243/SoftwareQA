@@ -89,9 +89,17 @@ public class Listener extends Thread {
                 public void run() {
                     g.setUpBottom(finalList, Client.getUsername());
                     g.setUpRight(finalList);
+                    g.setUpCenter(Client.getMessages());
                 }
             });
         }
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                g.setUpCenter(Client.getMessages());
+            }
+        });
 
         Client.setUsers(finalList);
         // g.setUpCenter(list);

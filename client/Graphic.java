@@ -124,11 +124,18 @@ public class Graphic {
         }
 
         bottom.setOnAction(e -> {
-            sendMessage("MESG " + user.getValue() + " " + bottom.getText());
+            String value = user.getValue();
+            String bottomText = bottom.getText();
+            sendMessage("MESG " + value + " " + bottomText);
+            Client.addMessages(Client.getUsername() + ":" + value);
             bottom.setText("");
         });
+
         btn.setOnAction(e -> {
-            sendMessage("MESG " + user.getValue() + " " + bottom.getText());
+            String value = user.getValue();
+            String bottomText = bottom.getText();
+            sendMessage("MESG " + value + " " + bottomText);
+            Client.addMessages(Client.getUsername() + ":" + value);
             bottom.setText("");
         });
 
@@ -160,11 +167,18 @@ public class Graphic {
         }
 
         bottom.setOnAction(e -> {
-            sendMessage("MESG " + user.getValue() + " " + bottom.getText());
+            String value = user.getValue();
+            String bottomText = bottom.getText();
+            sendMessage("MESG " + value + " " + bottomText);
+            Client.addMessages(Client.getUsername() + ":" + bottomText);
             bottom.setText("");
         });
+
         btn.setOnAction(e -> {
-            sendMessage("MESG " + user.getValue() + " " + bottom.getText());
+            String value = user.getValue();
+            String bottomText = bottom.getText();
+            sendMessage("MESG " + value + " " + bottomText);
+            Client.addMessages(Client.getUsername() + ":" + bottomText);
             bottom.setText("");
         });
 
@@ -178,7 +192,6 @@ public class Graphic {
         Client.getWriter().println(msg);
         Client.getWriter().flush();
     }
-
 
     public BorderPane setUpRight(String[] names){
         Label heading = new Label("Online users");
