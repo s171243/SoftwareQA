@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 import javafx.application.Application;
@@ -27,9 +28,10 @@ public class Client extends Application {
     private static BufferedReader br;
     private Graphic g;
     private static Boolean loggedIn = false;
-    private static ArrayList<String> messages = new ArrayList<String>();
+    private static LinkedList<String> messages = new LinkedList<String>();
     private static String[] users;
     private static String username;
+    private static int numMessages = 0;
 
     public static void main(String args[]) {
         launch(args);
@@ -39,7 +41,7 @@ public class Client extends Application {
         return writer;
     }
 
-    public static ArrayList<String> getMessages() {
+    public static LinkedList<String> getMessages() {
         return messages;
     }
 
@@ -61,6 +63,14 @@ public class Client extends Application {
 
     public static void setUsername(String username) {
         Client.username = username;
+    }
+
+    public static int getNumMessages() {
+        return numMessages;
+    }
+
+    public static void incNumMessages() {
+        Client.numMessages++;
     }
 
     @Override

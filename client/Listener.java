@@ -64,6 +64,7 @@ public class Listener extends Thread {
                 g.setUpCenter(Client.getMessages());
             }
         });
+
     }
 
     public static void connected() {
@@ -94,12 +95,16 @@ public class Listener extends Thread {
             });
         }
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                g.setUpCenter(Client.getMessages());
-            }
-        });
+        if(Client.getMessages().size() != Client.getNumMessages()) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    g.setUpCenter(Client.getMessages());
+                }
+            });
+
+            Client.incNumMessages();
+        }
 
         Client.setUsers(finalList);
         // g.setUpCenter(list);

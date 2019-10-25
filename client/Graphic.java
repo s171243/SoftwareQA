@@ -2,15 +2,13 @@ package client;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Graphic {
 
@@ -234,24 +232,29 @@ public class Graphic {
         return root;
     }
 
-    public BorderPane setUpCenter(ArrayList<String> messages){
+    public BorderPane setUpCenter(LinkedList<String> messages){
+        ScrollPane scroll = new ScrollPane();
+        scroll.setFitToWidth(true);
+        scroll.setPrefHeight(400);
+
         VBox center = new VBox(10);
 
         Label heading = new Label("Chat");
         heading.setStyle("-fx-font-weight: bold");
-        heading.setPadding(new Insets(10, 10, 10, 10));
+        heading.setPadding(new Insets(2, 10, 5, 10));
 
         center.getChildren().add(heading);
 
         for(String message : messages){
             Label label = new Label(message);
-            label.setPadding(new Insets(10, 10, 10, 10));
+            label.setPadding(new Insets(2, 10, 2, 10));
             center.getChildren().add(label);
         }
 
         center.setPadding(new Insets(50, 10, 50, 20));
-
-        root.setCenter(center);
+        scroll.setContent(center);
+        scroll.setVvalue(1.0);
+        root.setCenter(scroll);
         return root;
     }
 }
