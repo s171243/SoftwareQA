@@ -1,38 +1,26 @@
 package client;
 
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Scanner;
 
-public class Sender extends Thread {
+class Sender extends Thread {
 
-    private final Graphic g;
-    PrintWriter pw;
-    Scanner myScanner = new Scanner(System.in);
-    BorderPane root;
+    private final PrintWriter pw;
 
     // Constructor
-    public Sender(PrintWriter pw, Graphic g) {
+    public Sender(PrintWriter pw) {
         this.pw = pw;
-        this.g = g;
     }
 
     @Override
     public void run() {
-        String response = null;
-        while(true) {
+        while (this.isAlive()) {
             try {
                 sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            if (Client.getLoggedIn()){
+            if (Client.getLoggedIn()) {
                 pw.println("LIST");
                 pw.flush();
             }

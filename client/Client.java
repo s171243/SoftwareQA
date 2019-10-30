@@ -3,41 +3,25 @@ package client;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-import static java.lang.Thread.sleep;
 
 public class Client extends Application {
 
-    private static Socket socket;
-    private Thread listener;
-    private Thread sender;
     private static PrintWriter writer;
-    private static BufferedReader br;
-    private Graphic g;
     private static Boolean loggedIn = false;
-    private static LinkedList<String> messages = new LinkedList<String>();
+    private static final LinkedList<String> messages = new LinkedList<>();
     private static String[] users;
     private static String username;
     private static int numMessages = 0;
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         launch(args);
     }
 
-    public static PrintWriter getWriter(){
+    public static PrintWriter getWriter() {
         return writer;
     }
 
@@ -75,22 +59,19 @@ public class Client extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        g = new Graphic(primaryStage);
+        Graphic g = new Graphic(primaryStage);
         g.setup();
 
         try {
             String host = "localhost";
             int port = 9000;
-            Scanner myScanner = new Scanner(System.in);
             InetAddress address = InetAddress.getByName(host);
-            socket = new Socket(address, port);
+            Socket socket = new Socket(address, port);
 
             //Send the message to the server
             OutputStream os = socket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(os);
             writer = new PrintWriter(osw);
-
-            String number = "LIST";
 
             String sendMessage = "I am connected";
             writer.println(sendMessage);
@@ -100,12 +81,14 @@ public class Client extends Application {
             InputStream is = socket.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
-            String message = br.readLine();
+
+            // Reading twice to get welcome message
+            br.readLine();
             br.readLine();
 
             // create a new thread object
             Thread listener = new Listener(br, g);
-            Thread sender = new Sender(writer, g);
+            Thread sender = new Sender(writer);
 
             // Invoking the start() method
             listener.start();

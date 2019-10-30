@@ -7,20 +7,26 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class Graphic {
+class Graphic {
 
-    private Stage stage;
+    private final Stage stage;
     private static BorderPane root = new BorderPane();
+    private final int WIDTH = 500;
+    private final int HEIGHT = 500;
+    private final int BTN_WIDTH = 100;
+    private final int BOTTOM_HEIGHT = 100;
+    private final int TOP_HEIGHT = 50;
+    private final int DROP_WIDTH = 100;
 
-    public Graphic(Stage primaryStage){
+
+    Graphic(Stage primaryStage) {
         this.stage = primaryStage;
     }
 
 
-    public void setup(){
+    void setup() {
         stage.setTitle("Hello World!");
 
         //bottom
@@ -34,22 +40,21 @@ public class Graphic {
         root = setUpRight(names);
 
         // center
-        String[] messages = {"Hello, world!", "The world says hello back", "Oh wow - I never tried that!", "Yeah. That's life"};
         root = setUpCenter(Client.getMessages());
 
-        stage.setScene(new Scene(root, 500, 500));
+        stage.setScene(new Scene(root, WIDTH, HEIGHT));
         stage.show();
     }
 
     private BorderPane setUpTop() {
         //bottom
         Button btn = new Button("Login");
-        btn.setPrefWidth(100);
-        btn.setPrefHeight(50);
+        btn.setPrefWidth(BTN_WIDTH);
+        btn.setPrefHeight(TOP_HEIGHT);
 
         TextField top = new TextField();
-        top.setPrefWidth(400);
-        top.setPrefHeight(50);
+        top.setPrefWidth(WIDTH - BTN_WIDTH);
+        top.setPrefHeight(TOP_HEIGHT);
         top.setPromptText("What is your username?");
 
         top.setOnAction(e -> {
@@ -67,24 +72,24 @@ public class Graphic {
         return root;
     }
 
-    public void emptyTop(){
+    public void emptyTop() {
         root.setTop(null);
     }
 
-    public BorderPane setUpBottom(){
+    private BorderPane setUpBottom() {
         //bottom
         Button btn = new Button("Submit");
-        btn.setPrefWidth(100);
-        btn.setPrefHeight(100);
+        btn.setPrefWidth(BTN_WIDTH);
+        btn.setPrefHeight(BOTTOM_HEIGHT);
 
         TextField bottom = new TextField();
-        bottom.setPrefWidth(300);
-        bottom.setPrefHeight(100);
+        bottom.setPrefWidth(WIDTH - BTN_WIDTH - DROP_WIDTH);
+        bottom.setPrefHeight(BOTTOM_HEIGHT);
         bottom.setPromptText("Write your message");
 
         ComboBox user = new ComboBox();
-        user.setPrefWidth(100);
-        user.setPrefHeight(100);
+        user.setPrefWidth(DROP_WIDTH);
+        user.setPrefHeight(BOTTOM_HEIGHT);
         user.setPromptText("Recipient");
 
         bottom.setOnAction(e -> {
@@ -102,68 +107,32 @@ public class Graphic {
         return root;
     }
 
-    public BorderPane setUpBottom(String[] list){
+    public void setUpBottom(String[] list, String username) {
         //bottom
         Button btn = new Button("Submit");
-        btn.setPrefWidth(100);
-        btn.setPrefHeight(100);
+        btn.setPrefWidth(BTN_WIDTH);
+        btn.setPrefHeight(BOTTOM_HEIGHT);
 
         TextField bottom = new TextField();
-        bottom.setPrefWidth(300);
-        bottom.setPrefHeight(100);
+        bottom.setPrefWidth(WIDTH - DROP_WIDTH - BTN_WIDTH);
+        bottom.setPrefHeight(BOTTOM_HEIGHT);
         bottom.setPromptText("Write your message");
 
         ComboBox<String> user = new ComboBox<>();
-        user.setPrefWidth(100);
-        user.setPrefHeight(100);
+        user.setPrefWidth(DROP_WIDTH);
+        user.setPrefHeight(BOTTOM_HEIGHT);
         user.setPromptText("Recipient");
-        for (String recipient : list){
-            user.getItems().add(recipient);
-        }
 
-        bottom.setOnAction(e -> {
-            String value = user.getValue();
-            String bottomText = bottom.getText();
-            sendMessage("MESG " + value + " " + bottomText);
-            Client.addMessages(Client.getUsername() + ":" + value);
-            bottom.setText("");
-        });
-
-        btn.setOnAction(e -> {
-            String value = user.getValue();
-            String bottomText = bottom.getText();
-            sendMessage("MESG " + value + " " + bottomText);
-            Client.addMessages(Client.getUsername() + ":" + value);
-            bottom.setText("");
-        });
-
-        HBox bottomFrame = new HBox(2);
-        bottomFrame.getChildren().addAll(user, bottom, btn);
-        root.setBottom(bottomFrame);
-        return root;
-    }
-
-    public BorderPane setUpBottom(String[] list, String username){
-        //bottom
-        Button btn = new Button("Submit");
-        btn.setPrefWidth(100);
-        btn.setPrefHeight(100);
-
-        TextField bottom = new TextField();
-        bottom.setPrefWidth(300);
-        bottom.setPrefHeight(100);
-        bottom.setPromptText("Write your message");
-
-        ComboBox<String> user = new ComboBox<>();
-        user.setPrefWidth(100);
-        user.setPrefHeight(100);
-        user.setPromptText("Recipient");
-        for (String recipient : list){
-            if(!username.equals(recipient)) {
+        for (String recipient : list) {
+            if (!username.equals(recipient)) {
                 user.getItems().add(recipient);
+                if (list.length == 2) {
+                    user.setValue(recipient);
+                }
             }
         }
 
+
         bottom.setOnAction(e -> {
             String value = user.getValue();
             String bottomText = bottom.getText();
@@ -183,15 +152,14 @@ public class Graphic {
         HBox bottomFrame = new HBox(2);
         bottomFrame.getChildren().addAll(user, bottom, btn);
         root.setBottom(bottomFrame);
-        return root;
     }
 
-    public void sendMessage(String msg){
+    private void sendMessage(String msg) {
         Client.getWriter().println(msg);
         Client.getWriter().flush();
     }
 
-    public BorderPane setUpRight(String[] names){
+    public BorderPane setUpRight(String[] names) {
         Label heading = new Label("Online users");
         heading.setStyle("-fx-font-weight: bold");
         heading.setPadding(new Insets(10, 10, 10, 10));
@@ -199,7 +167,7 @@ public class Graphic {
         VBox vbox = new VBox(10);
         vbox.getChildren().add(heading);
 
-        for (String name : names){
+        for (String name : names) {
             Label label = new Label(name);
             vbox.getChildren().add(label);
         }
@@ -211,28 +179,7 @@ public class Graphic {
         return root;
     }
 
-    public BorderPane setUpCenter(String[] messages){
-        VBox center = new VBox(10);
-
-        Label heading = new Label("Chat");
-        heading.setStyle("-fx-font-weight: bold");
-        heading.setPadding(new Insets(10, 10, 10, 10));
-
-        center.getChildren().add(heading);
-
-        for(String message : messages){
-            Label label = new Label(message);
-            label.setPadding(new Insets(10, 10, 10, 10));
-            center.getChildren().add(label);
-        }
-
-        center.setPadding(new Insets(50, 10, 50, 20));
-
-        root.setCenter(center);
-        return root;
-    }
-
-    public BorderPane setUpCenter(LinkedList<String> messages){
+    public BorderPane setUpCenter(LinkedList<String> messages) {
         ScrollPane scroll = new ScrollPane();
         scroll.setFitToWidth(true);
         scroll.setPrefHeight(400);
@@ -245,7 +192,7 @@ public class Graphic {
 
         center.getChildren().add(heading);
 
-        for(String message : messages){
+        for (String message : messages) {
             Label label = new Label(message);
             label.setPadding(new Insets(2, 10, 2, 10));
             center.getChildren().add(label);
