@@ -77,33 +77,10 @@ class Graphic {
     }
 
     private BorderPane setUpBottom() {
-        //bottom
-        Button btn = new Button("Submit");
-        btn.setPrefWidth(BTN_WIDTH);
-        btn.setPrefHeight(BOTTOM_HEIGHT);
-
-        TextField bottom = new TextField();
-        bottom.setPrefWidth(WIDTH - BTN_WIDTH - DROP_WIDTH);
-        bottom.setPrefHeight(BOTTOM_HEIGHT);
-        bottom.setPromptText("Write your message");
-
-        ComboBox user = new ComboBox();
-        user.setPrefWidth(DROP_WIDTH);
-        user.setPrefHeight(BOTTOM_HEIGHT);
-        user.setPromptText("Recipient");
-
-        bottom.setOnAction(e -> {
-            sendMessage("MESG " + bottom.getText());
-            bottom.setText("");
-        });
-        btn.setOnAction(e -> {
-            sendMessage("MESG " + bottom.getText());
-            bottom.setText("");
-        });
-
-        HBox bottomFrame = new HBox(2);
-        bottomFrame.getChildren().addAll(user, bottom, btn);
-        root.setBottom(bottomFrame);
+        Label heading = new Label("You are not logged in. Please log in above.");
+        heading.setStyle("-fx-font-weight: bold");
+        heading.setPadding(new Insets(10, 10, 10, 10));
+        root.setBottom(heading);
         return root;
     }
 
