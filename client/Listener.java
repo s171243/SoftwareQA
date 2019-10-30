@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 
-class Listener extends Thread {
+public class Listener extends Thread {
 
     private final Graphic g;
     private final BufferedReader br;
@@ -17,32 +17,40 @@ class Listener extends Thread {
         this.g = g;
     }
 
-    private void validateMessage(String msg) {
+    public String validateMessage(String msg) {
         // receive
         if (msg.startsWith("Broadcast from")) {
             receive(msg.substring(14));
+            return "broadcast";
         }
 
         // connected
         else if (msg.startsWith("OK Welcome to the chat server,")) {
             connected();
+            return "welcome";
         }
 
         // receive
         else if (msg.startsWith("PM from")) {
             pm(msg.substring(8));
+            return "pm";
         }
 
         //listing
         else if (msg.startsWith("OK, the following users are online")) {
             listing(msg.substring(35));
+            return "list";
         } else if (msg.startsWith("OK Welcome to the chat server")) {
             loggedIn(msg.substring(30));
+            return "logged in";
         } else if (msg.startsWith("OK your message has been sent")) {
             sent();
+            return "sent";
         } else if (msg.equals("")) {
+            return "";
         } else {
             System.out.println("ehh... " + msg);
+            return "error";
         }
     }
 

@@ -3,6 +3,7 @@ package client;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javafx.application.Application;
@@ -12,7 +13,7 @@ public class Client extends Application {
 
     private static PrintWriter writer;
     private static Boolean loggedIn = false;
-    private static final LinkedList<String> messages = new LinkedList<>();
+    private static final ArrayList<String> messages = new ArrayList<>();
     private static String[] users;
     private static String username;
     private static int numMessages = 0;
@@ -25,7 +26,7 @@ public class Client extends Application {
         return writer;
     }
 
-    public static LinkedList<String> getMessages() {
+    public static ArrayList<String> getMessages() {
         return messages;
     }
 

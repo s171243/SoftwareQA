@@ -7,9 +7,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
-class Graphic {
+public class Graphic {
 
     private final Stage stage;
     private static BorderPane root = new BorderPane();
@@ -21,7 +22,7 @@ class Graphic {
     private final int DROP_WIDTH = 100;
 
 
-    Graphic(Stage primaryStage) {
+    public Graphic(Stage primaryStage) {
         this.stage = primaryStage;
     }
 
@@ -156,7 +157,7 @@ class Graphic {
         return root;
     }
 
-    BorderPane setUpCenter(LinkedList<String> messages) {
+    BorderPane setUpCenter(ArrayList<String> messages) {
         ScrollPane scroll = new ScrollPane();
         scroll.setFitToWidth(true);
         scroll.setPrefHeight(400);
