@@ -156,7 +156,7 @@ class Graphic {
         return root;
     }
 
-    public BorderPane setUpCenter(LinkedList<String> messages) {
+    BorderPane setUpCenter(LinkedList<String> messages) {
         ScrollPane scroll = new ScrollPane();
         scroll.setFitToWidth(true);
         scroll.setPrefHeight(400);
@@ -170,9 +170,7 @@ class Graphic {
         center.getChildren().add(heading);
 
         for (String message : messages) {
-            Label label = new Label(message);
-            label.setPadding(new Insets(2, 10, 2, 10));
-            center.getChildren().add(label);
+            center = addMessage(message, center);
         }
 
         center.setPadding(new Insets(50, 10, 50, 20));
@@ -181,4 +179,12 @@ class Graphic {
         root.setCenter(scroll);
         return root;
     }
+
+    VBox addMessage(String message, VBox center){
+        Label label = new Label(message);
+        label.setPadding(new Insets(2, 10, 2, 10));
+        center.getChildren().add(label);
+        return center;
+    }
+
 }
