@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GraphicTest {
-
+/*
     @BeforeEach
     void setUp() {
     }
@@ -44,4 +44,6 @@ class GraphicTest {
     void addMessage() {
         fail("Not yet implemented");
     }
+    
+ */
 }
