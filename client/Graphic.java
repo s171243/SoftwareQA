@@ -1,12 +1,20 @@
 package client;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -14,20 +22,20 @@ public class Graphic {
 
     private final Stage stage;
     private static BorderPane root = new BorderPane();
-    private final int WIDTH = 500;
+    private final int WIDTH = 800;
     private final int HEIGHT = 500;
+    private final int RIGHT_WIDTH = 200;
     private final int BTN_WIDTH = 100;
     private final int BOTTOM_HEIGHT = 100;
     private final int TOP_HEIGHT = 50;
     private final int DROP_WIDTH = 100;
-
 
     public Graphic(Stage primaryStage) {
         this.stage = primaryStage;
     }
 
 
-    void setup() {
+    public void setup() {
         stage.setTitle("Hello World!");
 
         //bottom
@@ -45,6 +53,10 @@ public class Graphic {
 
         stage.setScene(new Scene(root, WIDTH, HEIGHT));
         stage.show();
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 
     private BorderPane setUpTop() {
@@ -143,6 +155,7 @@ public class Graphic {
         heading.setPadding(new Insets(10, 10, 10, 10));
 
         VBox vbox = new VBox(10);
+        vbox.setPrefWidth(RIGHT_WIDTH);
         vbox.getChildren().add(heading);
 
         for (String name : names) {
@@ -181,10 +194,32 @@ public class Graphic {
         return root;
     }
 
-    VBox addMessage(String message, VBox center){
-        Label label = new Label(message);
+    VBox addMessage(String message, VBox center) {
+        HBox messageUI = new HBox(2);
+
+        String[] information = message.split(":", 2);
+        String username = information[0];
+        String text = information[1];
+
+        Label sender = new Label(username);
+        sender.setPadding(new Insets(0, 0, 0, 0));
+        sender.setPadding(new Insets(2, 0,0,0));
+        sender.setPrefWidth(100);
+        sender.setAlignment(Pos.BASELINE_RIGHT);
+        messageUI.getChildren().add(sender);
+
+        Label label = new Label(text);
+        label.setBackground(new Background(new BackgroundFill(Color.rgb(200, 200, 200), new CornerRadii(10), Insets.EMPTY)));
         label.setPadding(new Insets(2, 10, 2, 10));
-        center.getChildren().add(label);
+        label.setPrefWidth(WIDTH - RIGHT_WIDTH - 200);
+        label.setMaxWidth(WIDTH - RIGHT_WIDTH - 200);
+        label.setWrapText(true);
+
+        messageUI.getChildren().add(label);
+
+        messageUI.setAlignment(Pos.BASELINE_LEFT);
+
+        center.getChildren().add(messageUI);
         return center;
     }
 

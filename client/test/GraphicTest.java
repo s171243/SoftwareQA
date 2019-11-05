@@ -1,11 +1,40 @@
 package client.test;
 
+
+import client.Graphic;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GraphicTest {
+import org.testfx.framework.junit.ApplicationTest;
+
+class GraphicTest extends ApplicationTest {
+
+    private Graphic g;
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        
+    }
+
+    @BeforeEach
+    public void setUp() throws Exception {
+
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+    }
+
+    @org.junit.jupiter.api.Test
+    void setup() {
+        assertTrue(true);
+    }
+
 /*
     @BeforeEach
     void setUp() {
@@ -44,6 +73,6 @@ class GraphicTest {
     void addMessage() {
         fail("Not yet implemented");
     }
-    
+
  */
 }
