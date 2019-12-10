@@ -1,6 +1,7 @@
 package client;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -16,6 +17,7 @@ public class Client extends Application {
     private static String[] users;
     private static String username;
     private static int numMessages = 0;
+    private static int sleepTime = 10;
 
     public static void main(String[] args) {
         launch(args);
@@ -62,41 +64,52 @@ public class Client extends Application {
         Graphic g = new Graphic(primaryStage);
         g.setup();
 
-        try {
-            String host = "localhost";
-            int port = 9000;
-            InetAddress address = InetAddress.getByName(host);
-            Socket socket = new Socket(address, port);
+        while (true) {
+            try {
+                String host = "localhost";
+                int port = 9000;
+                InetAddress address = InetAddress.getByName(host);
+                Socket socket = new Socket(address, port);
 
-            //Send the message to the server
-            OutputStream os = socket.getOutputStream();
-            OutputStreamWriter osw = new OutputStreamWriter(os);
-            writer = new PrintWriter(osw);
+                //Send the message to the server
+                OutputStream os = socket.getOutputStream();
+                OutputStreamWriter osw = new OutputStreamWriter(os);
+                writer = new PrintWriter(osw);
 
-            String sendMessage = "I am connected";
-            writer.println(sendMessage);
-            writer.flush();
+                String sendMessage = "I am connected";
+                writer.println(sendMessage);
+                writer.flush();
 
-            //Get the return message from the server
-            InputStream is = socket.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
+                //Get the return message from the server
+                InputStream is = socket.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
 
-            // Reading twice to get welcome message
-            br.readLine();
-            br.readLine();
+                // Reading twice to get welcome message
+                br.readLine();
+                br.readLine();
 
-            // create a new thread object
-            Thread listener = new Listener(br, g);
-            Thread sender = new Sender(writer);
+                // create a new thread object
+                Thread listener = new Listener(br, g);
+                Thread sender = new Sender(writer);
 
-            // Invoking the start() method
-            listener.start();
-            sender.start();
+                // Invoking the start() method
+                listener.start();
+                sender.start();
+                break;
+            } catch (ConnectException exception) {
+                System.out.println("The server is not online yet. Trying again in " + sleepTime + " seconds");
+                try {
+                    Thread.sleep(sleepTime * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
 
-        } catch (Exception exception) {
-            exception.printStackTrace();
         }
+
     }
 
     public static void setLoggedIn(Boolean loggedIn) {

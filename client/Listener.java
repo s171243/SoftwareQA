@@ -95,7 +95,7 @@ class Listener extends Thread {
         System.out.println("We are logged in with username " + msg);
         Client.setUsername(msg);
         Client.setLoggedIn(true);
-        Platform.runLater(g::emptyTop);
+        Platform.runLater(g::topLoggedIn);
     }
 
     @Override
