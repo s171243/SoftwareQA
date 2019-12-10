@@ -1,8 +1,11 @@
 package client;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -96,7 +99,7 @@ class Graphic {
         btn.setPrefWidth(BTN_WIDTH);
         btn.setPrefHeight(BOTTOM_HEIGHT);
 
-        TextField bottom = new TextField();
+        TextArea bottom = new TextArea();
         bottom.setPrefWidth(WIDTH - DROP_WIDTH - BTN_WIDTH);
         bottom.setPrefHeight(BOTTOM_HEIGHT);
         bottom.setPromptText("Write your message");
@@ -116,20 +119,34 @@ class Graphic {
         }
 
 
-        bottom.setOnAction(e -> {
-            String value = user.getValue();
-            String bottomText = bottom.getText();
-            sendMessage("MESG " + value + " " + bottomText);
-            Client.addMessages(Client.getUsername() + ":" + bottomText);
-            bottom.setText("");
+        bottom.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.ENTER && keyEvent.isShiftDown())  {
+                    String value = user.getValue();
+                    String bottomText = bottom.getText().trim();
+                    if(bottomText.length() > 0) {
+                        System.out.println("Message is: " + bottomText);
+                        sendMessage("MESG " + value + " " + bottomText);
+                        Client.addMessages(Client.getUsername() + ":" + bottomText);
+                        bottom.setText("");
+                    } else {
+                        bottom.setText("");
+                    }
+                }
+            }
         });
 
         btn.setOnAction(e -> {
             String value = user.getValue();
-            String bottomText = bottom.getText();
-            sendMessage("MESG " + value + " " + bottomText);
-            Client.addMessages(Client.getUsername() + ":" + bottomText);
-            bottom.setText("");
+            String bottomText = bottom.getText().trim();
+            if(bottomText.length() > 0) {
+                sendMessage("MESG " + value + " " + bottomText);
+                Client.addMessages(Client.getUsername() + ":" + bottomText);
+                bottom.setText("");
+            } else {
+                bottom.setText("");
+            }
         });
 
         HBox bottomFrame = new HBox(2);
