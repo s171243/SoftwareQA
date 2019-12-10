@@ -18,6 +18,7 @@ public class Client extends Application {
     private static String username;
     private static int numMessages = 0;
     private static int sleepTime = 10;
+    public static char separator = ((char)007);
 
     public static void main(String[] args) {
         launch(args);

@@ -126,14 +126,17 @@ class Graphic {
                     String value = user.getValue();
                     String bottomText = bottom.getText().trim();
                     if(bottomText.length() > 0) {
-                        System.out.println("Message is: " + bottomText);
-                        sendMessage("MESG " + value + " " + bottomText);
                         Client.addMessages(Client.getUsername() + ":" + bottomText);
+                        bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
+                        sendMessage("MESG " + value + " " + bottomText);
                         bottom.setText("");
                     } else {
                         bottom.setText("");
                     }
                 }
+                /*if (keyEvent.getCode() == KeyCode.ENTER && !keyEvent.isShiftDown())  {
+                    bottom.setText(bottom.getText() + "\n");
+                }*/
             }
         });
 
@@ -141,8 +144,9 @@ class Graphic {
             String value = user.getValue();
             String bottomText = bottom.getText().trim();
             if(bottomText.length() > 0) {
-                sendMessage("MESG " + value + " " + bottomText);
                 Client.addMessages(Client.getUsername() + ":" + bottomText);
+                bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
+                sendMessage("MESG " + value + " " + bottomText);
                 bottom.setText("");
             } else {
                 bottom.setText("");

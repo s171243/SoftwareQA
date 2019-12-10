@@ -51,6 +51,7 @@ class Listener extends Thread {
     }
 
     private void pm(String msg) {
+        msg = msg.replace("$r", "\r").replace("$n", "\n");
         Client.addMessages(msg);
         Platform.runLater(() -> g.setUpCenter(Client.getMessages()));
 
