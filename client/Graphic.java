@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 
 import java.util.LinkedList;
 
+// import static jdk.internal.org.jline.terminal.Terminal.MouseTracking.Button;
+
 class Graphic {
 
     private final Stage stage;
@@ -72,8 +74,12 @@ class Graphic {
         return root;
     }
 
-    public void emptyTop() {
-        root.setTop(null);
+    public void topLoggedIn() {
+        Label userName = new Label("Your username is:   " + Client.getUsername());
+        userName.setPadding(new Insets(10, 10, 10, 10));
+        HBox topFrame = new HBox(1);
+        topFrame.getChildren().add(userName);
+        root.setTop(topFrame);
     }
 
     private BorderPane setUpBottom() {
