@@ -46,7 +46,7 @@ class Graphic {
 
         //right
         String[] names = {"You're not logged in"};
-        root = setUpRight(names);
+        root = setUpRight();
 
         // center
         root = setUpCenter();
@@ -78,11 +78,13 @@ class Graphic {
         top.setOnAction(e -> {
             sendMessage("IDEN " + top.getText());
             top.setText("");
+            setUpRight();
         });
 
         btn.setOnAction(e -> {
             sendMessage("IDEN " + top.getText());
             top.setText("");
+            setUpRight();
         });
 
         HBox topFrame = new HBox(2);
@@ -106,7 +108,7 @@ class Graphic {
             Client.getWriter().flush();
             setUpTop();
             setUpBottom("You have been logged out succesfully");
-            setUpRight(Client.getUsers());
+            setUpRight();
 
             Client.setUsername("");
             try {
@@ -120,6 +122,10 @@ class Graphic {
         root.setTop(topFrame);
     }
 
+    public void addUserDropdown(String user) {
+
+    }
+
     public BorderPane setUpBottom(String s) {
         Label heading = new Label(s);
         heading.setStyle("-fx-font-weight: bold");
@@ -127,6 +133,7 @@ class Graphic {
         root.setBottom(heading);
         return root;
     }
+
 
     public void setUpBottom(String[] list, String username) {
         //bottom
@@ -176,7 +183,7 @@ class Graphic {
         String value = user.getValue();
         String bottomText = bottom.getText().trim();
         if (bottomText.length() > 0) {
-            if(value.equals("BROADCAST")){
+            if (value.equals("BROADCAST")) {
                 bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
                 sendMessage("HAIL" + " " + bottomText);
             } else {
@@ -195,18 +202,29 @@ class Graphic {
         Client.getWriter().flush();
     }
 
-    public BorderPane setUpRight(String[] names) {
+    public void drawUserList(String[] users) {
+        Node right = root.getRight();
+            if (right instanceof VBox) {
+                VBox vbox = (VBox) right;
+                for (String na : users) {
+                    if (vbox.getChildren().size() >= 2) {
+                        vbox.getChildren().remove(1, vbox.getChildren().size());
+                    }
+                }
+                for (String name : users) {
+                    Label label = new Label(name);
+                    vbox.getChildren().add(label);
+                }
+        }
+    }
+
+    public BorderPane setUpRight() {
         Label heading = new Label("Online users");
         heading.setStyle("-fx-font-weight: bold");
         heading.setPadding(new Insets(10, 10, 10, 10));
 
         VBox vbox = new VBox(10);
         vbox.getChildren().add(heading);
-
-        for (String name : names) {
-            Label label = new Label(name);
-            vbox.getChildren().add(label);
-        }
 
         vbox.setPadding(new Insets(20, 10, 20, 20));
         vbox.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -215,16 +233,16 @@ class Graphic {
         return root;
     }
 
-    public void addMessageToPane(String message){
+    public void addMessageToPane(String message) {
         Node center = root.getCenter();
         Label label = new Label(message);
         label.setPadding(new Insets(2, 10, 2, 10));
         label.setWrapText(true);
-        if(center instanceof ScrollPane){
+        if (center instanceof ScrollPane) {
             System.out.println("IT is a ScrollPane!!!");
             ScrollPane s = (ScrollPane) center;
             Node v = s.getContent();
-            if (v instanceof VBox){
+            if (v instanceof VBox) {
                 System.out.println("IT is a VBOX!!!");
                 VBox vBox = (VBox) v;
                 vBox.getChildren().add(label);

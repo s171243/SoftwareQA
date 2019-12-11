@@ -53,7 +53,7 @@ class Listener extends Thread {
             sent();
         } else if (msg.startsWith("BAD username is already taken")) {
 
-           Platform.runLater(() -> g.setUpBottom("The username is already taken. Try again!"));
+            Platform.runLater(() -> g.setUpBottom("The username is already taken. Try again!"));
 
         } else {
             System.out.println("ehh... " + msg);
@@ -86,6 +86,8 @@ class Listener extends Thread {
         System.out.println("Message sent");
     }
 
+    String[] lastList = new String[5];
+
     private void listing(String msg) {
         String[] list = msg.split(",");
         list = Arrays.copyOf(list, list.length - 1);
@@ -95,22 +97,18 @@ class Listener extends Thread {
         // System.out.println(Arrays.toString(list));
         String[] finalList = list;
 
-        if (!Arrays.equals(list, Client.getUsers())) {
+        if (!Arrays.equals(finalList, lastList)){
             Platform.runLater(() -> {
                 g.setUpBottom(finalList, Client.getUsername());
-                g.setUpRight(finalList);
+                //g.setUpRight();
+                g.drawUserList(finalList);
                 //g.addMessageToPane(msg);
             });
         }
 
-        if (Client.getMessages().size() != Client.getNumMessages()) {
-            // Platform.runLater(() -> g.setUpCenter());
-
-            Client.incNumMessages();
-        }
-
         Client.setUsers(finalList);
         // g.setUpCenter(list);
+        lastList = finalList;
     }
 
     private void loggedIn(String msg) {
@@ -118,6 +116,7 @@ class Listener extends Thread {
         Client.setUsername(msg);
         Client.setLoggedIn(true);
         Platform.runLater(g::topLoggedIn);
+        Platform.runLater(g::setUpRight);
     }
 
     @Override
