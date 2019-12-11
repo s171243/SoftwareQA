@@ -38,6 +38,14 @@ class Graphic {
         stage.show();
     }
 
+    public BorderPane sendErrorMessage(String s) {
+        Label heading = new Label(s);
+        heading.setStyle("-fx-font-weight: bold");
+        heading.setPadding(new Insets(10, 10, 10, 10));
+        root.setBottom(heading);
+        return root;
+    }
+
     private BorderPane setUpTop() {
         Button btn = createButton("Login", TOP_HEIGHT);
 
@@ -65,6 +73,13 @@ class Graphic {
         return root;
     }
 
+    private Button createButton(String s, int top_height) {
+        Button btn = new Button(s);
+        btn.setPrefWidth(BTN_WIDTH);
+        btn.setPrefHeight(top_height);
+        return btn;
+    }
+
     private TextField createTextField() {
         TextField top = new TextField();
         top.setPrefWidth(WIDTH - BTN_WIDTH);
@@ -77,6 +92,47 @@ class Graphic {
         sendMessage("IDEN " + top.getText());
         top.setText("");
         setUpRight();
+    }
+
+    private void sendMessage(String msg) {
+        Client.getWriter().println(msg);
+        Client.getWriter().flush();
+    }
+
+    public BorderPane setUpRight() {
+        Label heading = new Label("Online users");
+        heading.setStyle("-fx-font-weight: bold");
+        heading.setPadding(new Insets(10, 10, 10, 10));
+
+        VBox vbox = new VBox(10);
+        vbox.getChildren().add(heading);
+        vbox.setPadding(new Insets(20, 10, 20, 20));
+        vbox.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        root.setRight(vbox);
+        return root;
+    }
+
+    private BorderPane setUpCenter() {
+        ScrollPane scroll = new ScrollPane();
+        scroll.setFitToWidth(true);
+        scroll.setPrefHeight(400);
+
+        VBox center = new VBox(10);
+        center.setId("center");
+
+        Label heading = new Label("Chat");
+        heading.setStyle("-fx-font-weight: bold");
+        heading.setPadding(new Insets(2, 10, 5, 10));
+
+        center.getChildren().add(heading);
+
+        center.setPadding(new Insets(50, 10, 50, 20));
+        scroll.setContent(center);
+        scroll.setVvalue(1.0);
+
+        root.setCenter(scroll);
+        return root;
     }
 
     public void topLoggedIn() {
@@ -113,22 +169,6 @@ class Graphic {
         return userName;
     }
 
-    private Button createButton(String s, int top_height) {
-        Button btn = new Button(s);
-        btn.setPrefWidth(BTN_WIDTH);
-        btn.setPrefHeight(top_height);
-        return btn;
-    }
-
-    public BorderPane sendErrorMessage(String s) {
-        Label heading = new Label(s);
-        heading.setStyle("-fx-font-weight: bold");
-        heading.setPadding(new Insets(10, 10, 10, 10));
-        root.setBottom(heading);
-        return root;
-    }
-
-
     public void setUpBottom() {
         //bottom
         Button btn = createButton("Submit", BOTTOM_HEIGHT);
@@ -151,14 +191,6 @@ class Graphic {
         root.setBottom(bottomFrame);
     }
 
-    private ComboBox<String> createComboBox() {
-        ComboBox<String> user = new ComboBox<>();
-        user.setPrefWidth(DROP_WIDTH);
-        user.setPrefHeight(BOTTOM_HEIGHT);
-        user.setPromptText("Recipient");
-        return user;
-    }
-
     private TextArea createTextArea() {
         TextArea bottom = new TextArea();
         bottom.setPrefWidth(WIDTH - DROP_WIDTH - BTN_WIDTH);
@@ -167,86 +199,34 @@ class Graphic {
         return bottom;
     }
 
-    public void populateComboBox(String[] list, String username) {
-        Node bottom = root.getBottom();
-        if (bottom instanceof HBox) {
-            HBox h = (HBox) bottom;
-            Node combo = h.getChildren().get(0);
-            if (combo instanceof ComboBox) {
-                System.out.println("It IS a COMBOBOX!!!");
-                ComboBox<String> c = (ComboBox<String>) combo;
-                c.getItems().remove(1, c.getItems().size());
-                for (String recipient : list) {
-                    if (!username.equals(recipient)) {
-                        c.getItems().add(recipient);
-                        if (list.length == 2) {
-                            c.setValue(recipient);
-                        }
-                    }
-                }
-
-                if (list.length == 1) {
-                    c.setValue("BROADCAST");
-                }
-            }
-        }
+    private ComboBox<String> createComboBox() {
+        ComboBox<String> user = new ComboBox<>();
+        user.setPrefWidth(DROP_WIDTH);
+        user.setPrefHeight(BOTTOM_HEIGHT);
+        user.setPromptText("Recipient");
+        return user;
     }
 
     private void handleSubmit(ComboBox<String> user, TextArea bottom) {
         String value = user.getValue();
         String bottomText = bottom.getText().trim();
-        if (bottomText.length() > 0) {
-            if (value.equals("BROADCAST")) {
-                bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
-                sendMessage("HAIL" + " " + bottomText);
-            } else {
-                addMessageToPane(Client.getUsername() + ":" + bottomText);
-                bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
-                sendMessage("MESG " + value + " " + bottomText);
-            }
+
+        if (bottomText.length() <= 0) {
             bottom.setText("");
-        } else {
+            return;
+        }
+
+        if (value.equals("BROADCAST")) {
+            bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
+            sendMessage("HAIL" + " " + bottomText);
             bottom.setText("");
+            return;
         }
-    }
 
-    private void sendMessage(String msg) {
-        Client.getWriter().println(msg);
-        Client.getWriter().flush();
-    }
-
-    public void drawUserList(String[] users) {
-        Node right = root.getRight();
-        if (right instanceof VBox) {
-            VBox vbox = (VBox) right;
-            if (vbox.getChildren().size() >= 2) {
-                vbox.getChildren().remove(1, vbox.getChildren().size());
-            }
-            if (users.length > 1) {
-                for (String name : users) {
-                    if (!name.equals(Client.getUsername())) {
-                        Label label = new Label(name);
-                        vbox.getChildren().add(label);
-                    }
-                }
-            } else {
-                vbox.getChildren().add(new Label("You are alone"));
-            }
-        }
-    }
-
-    public BorderPane setUpRight() {
-        Label heading = new Label("Online users");
-        heading.setStyle("-fx-font-weight: bold");
-        heading.setPadding(new Insets(10, 10, 10, 10));
-
-        VBox vbox = new VBox(10);
-        vbox.getChildren().add(heading);
-        vbox.setPadding(new Insets(20, 10, 20, 20));
-        vbox.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
-
-        root.setRight(vbox);
-        return root;
+        addMessageToPane(Client.getUsername() + ":" + bottomText);
+        bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
+        sendMessage("MESG " + value + " " + bottomText);
+        bottom.setText("");
     }
 
     public void addMessageToPane(String message) {
@@ -264,25 +244,63 @@ class Graphic {
         }
     }
 
-    private BorderPane setUpCenter() {
-        ScrollPane scroll = new ScrollPane();
-        scroll.setFitToWidth(true);
-        scroll.setPrefHeight(400);
+    public void populateComboBox(String[] list, String username) {
+        Node bottom = root.getBottom();
+        if (!(bottom instanceof HBox)) {
+            return;
+        }
 
-        VBox center = new VBox(10);
-        center.setId("center");
 
-        Label heading = new Label("Chat");
-        heading.setStyle("-fx-font-weight: bold");
-        heading.setPadding(new Insets(2, 10, 5, 10));
+        HBox h = (HBox) bottom;
+        Node combo = h.getChildren().get(0);
+        if (!(combo instanceof ComboBox)) {
+            return;
+        }
+        ComboBox<String> c = (ComboBox<String>) combo;
+        c.getItems().remove(1, c.getItems().size());
 
-        center.getChildren().add(heading);
+        for (String recipient : list) {
+            if (username.equals(recipient)) {
+                continue;
+            }
+            c.getItems().add(recipient);
 
-        center.setPadding(new Insets(50, 10, 50, 20));
-        scroll.setContent(center);
-        scroll.setVvalue(1.0);
+            if (list.length != 2) {
+                c.setValue(recipient);
+            }
+        }
 
-        root.setCenter(scroll);
-        return root;
+        if (list.length == 1) {
+            c.setValue("BROADCAST");
+        }
+
     }
+
+    public void drawUserList(String[] users) {
+        Node right = root.getRight();
+        if (!(right instanceof VBox)) {
+            return;
+        }
+
+        VBox vbox = (VBox) right;
+        if (vbox.getChildren().size() >= 2) {
+            vbox.getChildren().remove(1, vbox.getChildren().size());
+        }
+
+        if (users.length <= 1) {
+            vbox.getChildren().add(new Label("You are alone"));
+            return;
+        }
+
+        for (String name : users) {
+            if (name.equals(Client.getUsername())) {
+                continue;
+            }
+
+            Label label = new Label(name);
+            vbox.getChildren().add(label);
+        }
+
+    }
+
 }

@@ -24,10 +24,11 @@ class Sender extends Thread {
                 e.printStackTrace();
             }
 
-            if (Client.getLoggedIn()) {
+            if (Client.isLoggedIn()) {
                 pw.println("LIST");
                 pw.flush();
             }
         }
     }
+
 }

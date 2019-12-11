@@ -23,10 +23,6 @@ public class Client extends Application {
         launch(args);
     }
 
-    public static PrintWriter getWriter() {
-        return writer;
-    }
-
     public static String getUsername() {
         return username;
     }
@@ -74,7 +70,7 @@ public class Client extends Application {
         sender.start();
     }
 
-    public static Boolean getLoggedIn() {
+    public static Boolean isLoggedIn() {
         return loggedIn;
     }
 
@@ -112,4 +108,9 @@ public class Client extends Application {
             }
         }
     }
+
+    public static PrintWriter getWriter() {
+        return writer;
+    }
+
 }

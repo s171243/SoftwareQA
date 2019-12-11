@@ -31,25 +31,35 @@ class Listener extends Thread {
         isRunning = running;
     }
 
+    @Override
+    public void run() {
+        while (isRunning) {
+            try {
+                String response = br.readLine();
+                if (response != null) {
+                    validateMessage(response);
+                }
+            } catch (IOException e) {
+                System.out.println("The socket is down....");
+                try {
+                    Platform.runLater(() -> g.sendErrorMessage("The server is currently down. Please close the window and retry"));
+                    sleep(10000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
     private void validateMessage(String msg) {
 
-        // receive
         if (msg.startsWith("Broadcast from")) {
             receive(msg.substring(14));
-        }
-
-        // connected
-        else if (msg.startsWith("OK Welcome to the chat server,")) {
+        } else if (msg.startsWith("OK Welcome to the chat server,")) {
             connected();
-        }
-
-        // receive
-        else if (msg.startsWith("PM from")) {
+        } else if (msg.startsWith("PM from")) {
             pm(msg.substring(8));
-        }
-
-        //listing
-        else if (msg.startsWith("OK, the following users are online")) {
+        } else if (msg.startsWith("OK, the following users are online")) {
             listing(msg.substring(35));
         } else if (msg.startsWith("OK Welcome to the chat server")) {
             loggedIn(msg.substring(30));
@@ -66,7 +76,7 @@ class Listener extends Thread {
     private void receive(String msg) {
         msg = "*" + msg;
         String finalMsg = msg;
-        Platform.runLater(() -> g.addMessageToPane(finalMsg));
+        if(Client.isLoggedIn()) Platform.runLater(() -> g.addMessageToPane(finalMsg));
     }
 
     private void pm(String msg) {
@@ -103,23 +113,4 @@ class Listener extends Thread {
         Platform.runLater(g::setUpBottom);
     }
 
-    @Override
-    public void run() {
-        while (isRunning) {
-            try {
-                String response = br.readLine();
-                if (response != null) {
-                    validateMessage(response);
-                }
-            } catch (IOException e) {
-                System.out.println("The socket is down....");
-                try {
-                    Platform.runLater(() -> g.sendErrorMessage("The server is currently down. Please close the window and retry"));
-                    sleep(10000);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-    }
 }
