@@ -216,6 +216,7 @@ class Graphic {
         for (String message : messages) {
             Label label = new Label(message);
             label.setPadding(new Insets(2, 10, 2, 10));
+            label.setWrapText(true);
             center.getChildren().add(label);
         }
 
