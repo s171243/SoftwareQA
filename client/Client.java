@@ -19,6 +19,8 @@ public class Client extends Application {
     private static String username;
     private static int numMessages = 0;
     private static int sleepTime = 10;
+    private static Listener listener;
+    private static Sender sender;
     public static char separator = ((char) 007);
 
     public static void main(String[] args) {
@@ -68,36 +70,7 @@ public class Client extends Application {
 
         while (true) {
             try {
-                String host = "localhost";
-                int port = 9000;
-                InetAddress address = InetAddress.getByName(host);
-                Socket socket = new Socket(address, port);
-
-                //Send the message to the server
-                OutputStream os = socket.getOutputStream();
-                OutputStreamWriter osw = new OutputStreamWriter(os);
-                writer = new PrintWriter(osw);
-
-                String sendMessage = "I am connected";
-                writer.println(sendMessage);
-                writer.flush();
-
-                //Get the return message from the server
-                InputStream is = socket.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr);
-
-                // Reading twice to get welcome message
-                br.readLine();
-                br.readLine();
-
-                // create a new thread object
-                Thread listener = new Listener(br, g);
-                Thread sender = new Sender(writer);
-
-                // Invoking the start() method
-                listener.start();
-                sender.start();
+                setupConnection(g);
                 break;
             } catch (ConnectException e) {
                 System.out.println("The server is not online yet. Trying again in " + sleepTime + " seconds");
@@ -106,6 +79,45 @@ public class Client extends Application {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void restartConnection(Graphic g) throws IOException {
+        listener.setRunning(false);
+        sender.setRunning(false);
+        setupConnection(g);
+    }
+
+    private static void setupConnection(Graphic g) throws IOException {
+        String host = "localhost";
+        int port = 9000;
+        InetAddress address = InetAddress.getByName(host);
+        Socket socket = new Socket(address, port);
+
+        //Send the message to the server
+        OutputStream os = socket.getOutputStream();
+        OutputStreamWriter osw = new OutputStreamWriter(os);
+        writer = new PrintWriter(osw);
+
+        String sendMessage = "I am connected";
+        writer.println(sendMessage);
+        writer.flush();
+
+        //Get the return message from the server
+        InputStream is = socket.getInputStream();
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+
+        // Reading twice to get welcome message
+        br.readLine();
+        br.readLine();
+
+        // create a new thread object
+        listener = new Listener(br, g);
+        sender = new Sender(writer);
+
+        // Invoking the start() method
+        listener.start();
+        sender.start();
     }
 
     public static void setLoggedIn(Boolean loggedIn) {

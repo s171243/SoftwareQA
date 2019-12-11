@@ -10,6 +10,16 @@ class Listener extends Thread {
 
     private final Graphic g;
     private final BufferedReader br;
+    private boolean isRunning = true;
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
+    }
+
 
     // Constructor
     public Listener(BufferedReader br, Graphic g) {
@@ -41,7 +51,6 @@ class Listener extends Thread {
             loggedIn(msg.substring(30));
         } else if (msg.startsWith("OK your message has been sent")) {
             sent();
-        } else if (msg.equals("")) {
         } else {
             System.out.println("ehh... " + msg);
         }
@@ -75,6 +84,7 @@ class Listener extends Thread {
         // System.out.println(Arrays.toString(list));
         String[] finalList = list;
 
+        System.out.println("Which users are online? " + Arrays.toString(list));
         if (!Arrays.equals(list, Client.getUsers())) {
             Platform.runLater(() -> {
                 g.setUpBottom(finalList, Client.getUsername());
@@ -102,10 +112,12 @@ class Listener extends Thread {
 
     @Override
     public void run() {
-        while (this.isAlive()) {
+        while (isRunning) {
             try {
                 String response = br.readLine();
-                validateMessage(response);
+                if(response != null){
+                    validateMessage(response);
+                }
                 // System.out.println("Server : " + response);
             } catch (IOException e) {
                 e.printStackTrace();

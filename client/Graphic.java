@@ -10,6 +10,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.LinkedList;
 
 // import static jdk.internal.org.jline.terminal.Terminal.MouseTracking.Button;
@@ -71,9 +72,9 @@ class Graphic {
             top.setText("");
         });
 
-        HBox bottomFrame = new HBox(2);
-        bottomFrame.getChildren().addAll(top, btn);
-        root.setTop(bottomFrame);
+        HBox topFrame = new HBox(2);
+        topFrame.getChildren().addAll(top, btn);
+        root.setTop(topFrame);
         return root;
     }
 
@@ -84,7 +85,7 @@ class Graphic {
 
         Button btn = new Button("Submit");
         btn.setPrefWidth(BTN_WIDTH);
-        btn.setPrefHeight(BOTTOM_HEIGHT);
+        btn.setPrefHeight(TOP_HEIGHT);
 
         btn.setOnAction(e -> {
             Client.setLoggedIn(false);
@@ -92,7 +93,14 @@ class Graphic {
             Client.getWriter().flush();
             setUpTop();
             setUpBottom();
+            setUpRight(Client.getUsers());
+
             Client.setUsername("");
+            try {
+                Client.restartConnection(this);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         });
 
         topFrame.getChildren().addAll(userName, btn);
@@ -136,7 +144,7 @@ class Graphic {
         bottom.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if (keyEvent.getCode() == KeyCode.ENTER && keyEvent.isShiftDown())  {
+                if (keyEvent.getCode() == KeyCode.ENTER && keyEvent.isShiftDown()) {
                     handleSubmit(user, bottom);
                 }
                 /*if (keyEvent.getCode() == KeyCode.ENTER && !keyEvent.isShiftDown())  {
@@ -157,7 +165,7 @@ class Graphic {
     private void handleSubmit(ComboBox<String> user, TextArea bottom) {
         String value = user.getValue();
         String bottomText = bottom.getText().trim();
-        if(bottomText.length() > 0) {
+        if (bottomText.length() > 0) {
             Client.addMessages(Client.getUsername() + ":" + bottomText);
             bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
             sendMessage("MESG " + value + " " + bottomText);

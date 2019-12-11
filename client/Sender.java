@@ -6,6 +6,16 @@ class Sender extends Thread {
 
     private final PrintWriter pw;
 
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
+    }
+
+    private boolean isRunning = true;
+
     // Constructor
     public Sender(PrintWriter pw) {
         this.pw = pw;
@@ -13,7 +23,7 @@ class Sender extends Thread {
 
     @Override
     public void run() {
-        while (this.isAlive()) {
+        while (this.isRunning) {
             try {
                 sleep(500);
             } catch (InterruptedException e) {
