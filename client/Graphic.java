@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-class Graphic {
+public class Graphic {
 
     private static BorderPane root = new BorderPane();
     private final Stage stage;
@@ -21,7 +21,7 @@ class Graphic {
     private final int TOP_HEIGHT = 50;
     private final int DROP_WIDTH = 100;
 
-    Graphic(Stage primaryStage) {
+    public Graphic(Stage primaryStage) {
         this.stage = primaryStage;
     }
 

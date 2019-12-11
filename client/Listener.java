@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 
-class Listener extends Thread {
+public class Listener extends Thread {
 
     private final Graphic g;
     private final BufferedReader br;
@@ -51,7 +51,7 @@ class Listener extends Thread {
         }
     }
 
-    private void validateMessage(String msg) {
+    public void validateMessage(String msg) {
 
         if (msg.startsWith("Broadcast from")) {
             receive(msg.substring(14));
