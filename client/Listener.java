@@ -60,8 +60,12 @@ class Listener extends Thread {
         }
     }
 
-    private static void receive(String msg) {
-        System.out.println("Message received: " + msg);
+    // broadcast
+    private void receive(String msg) {
+        //System.out.println("Message received: " + msg);
+        msg = "*" + msg;
+        Client.addMessages(msg);
+        Platform.runLater(() -> g.setUpCenter(Client.getMessages()));
     }
 
     private void pm(String msg) {

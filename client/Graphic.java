@@ -141,6 +141,7 @@ class Graphic {
         user.setPrefWidth(DROP_WIDTH);
         user.setPrefHeight(BOTTOM_HEIGHT);
         user.setPromptText("Recipient");
+        user.getItems().add("BROADCAST");
 
         for (String recipient : list) {
             if (!username.equals(recipient)) {
@@ -151,16 +152,12 @@ class Graphic {
             }
         }
 
-
         bottom.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if (keyEvent.getCode() == KeyCode.ENTER && keyEvent.isShiftDown()) {
+                if (keyEvent.getCode() == KeyCode.ENTER && keyEvent.isControlDown()) {
                     handleSubmit(user, bottom);
                 }
-                /*if (keyEvent.getCode() == KeyCode.ENTER && !keyEvent.isShiftDown())  {
-                    bottom.setText(bottom.getText() + "\n");
-                }*/
             }
         });
 
@@ -177,9 +174,14 @@ class Graphic {
         String value = user.getValue();
         String bottomText = bottom.getText().trim();
         if (bottomText.length() > 0) {
-            Client.addMessages(Client.getUsername() + ":" + bottomText);
-            bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
-            sendMessage("MESG " + value + " " + bottomText);
+            if(value.equals("BROADCAST")){
+                bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
+                sendMessage(value + " " + bottomText);
+            } else {
+                Client.addMessages(Client.getUsername() + ":" + bottomText);
+                bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
+                sendMessage("MESG " + value + " " + bottomText);
+            }
             bottom.setText("");
         } else {
             bottom.setText("");
