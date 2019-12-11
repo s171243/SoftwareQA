@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.security.Key;
 import java.util.LinkedList;
 
 // import static jdk.internal.org.jline.terminal.Terminal.MouseTracking.Button;
@@ -36,7 +37,7 @@ class Graphic {
         stage.setTitle("Hello World!");
 
         //bottom
-        root = setUpBottom();
+        root = setUpBottom("You are not logged in - type your username above.");
 
         //top
         root = setUpTop();
@@ -59,6 +60,15 @@ class Graphic {
         btn.setPrefHeight(TOP_HEIGHT);
 
         TextField top = new TextField();
+
+        top.setTextFormatter(new TextFormatter<>(change -> {
+            if (change.getText().equals(" ")) {
+                setUpBottom("Your username should be 1 word - no spaces!");
+                change.setText("");
+            }
+            return change;
+        }));
+
         top.setPrefWidth(WIDTH - BTN_WIDTH);
         top.setPrefHeight(TOP_HEIGHT);
         top.setPromptText("What is your username?");
@@ -67,6 +77,7 @@ class Graphic {
             sendMessage("IDEN " + top.getText());
             top.setText("");
         });
+
         btn.setOnAction(e -> {
             sendMessage("IDEN " + top.getText());
             top.setText("");
@@ -92,7 +103,7 @@ class Graphic {
             Client.getWriter().println("QUIT");
             Client.getWriter().flush();
             setUpTop();
-            setUpBottom();
+            setUpBottom("You have been logged out succesfully");
             setUpRight(Client.getUsers());
 
             Client.setUsername("");
@@ -107,8 +118,8 @@ class Graphic {
         root.setTop(topFrame);
     }
 
-    private BorderPane setUpBottom() {
-        Label heading = new Label("You are not logged in. Please log in above.");
+    public BorderPane setUpBottom(String s) {
+        Label heading = new Label(s);
         heading.setStyle("-fx-font-weight: bold");
         heading.setPadding(new Insets(10, 10, 10, 10));
         root.setBottom(heading);

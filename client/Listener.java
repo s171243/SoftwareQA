@@ -51,6 +51,10 @@ class Listener extends Thread {
             loggedIn(msg.substring(30));
         } else if (msg.startsWith("OK your message has been sent")) {
             sent();
+        } else if (msg.startsWith("BAD username is already taken")) {
+
+           Platform.runLater(() -> g.setUpBottom("The username is already taken. Try again!"));
+
         } else {
             System.out.println("ehh... " + msg);
         }
@@ -84,7 +88,6 @@ class Listener extends Thread {
         // System.out.println(Arrays.toString(list));
         String[] finalList = list;
 
-        System.out.println("Which users are online? " + Arrays.toString(list));
         if (!Arrays.equals(list, Client.getUsers())) {
             Platform.runLater(() -> {
                 g.setUpBottom(finalList, Client.getUsername());
@@ -115,7 +118,7 @@ class Listener extends Thread {
         while (isRunning) {
             try {
                 String response = br.readLine();
-                if(response != null){
+                if (response != null) {
                     validateMessage(response);
                 }
                 // System.out.println("Server : " + response);

@@ -11,6 +11,8 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 
+import static java.lang.System.exit;
+
 public class Client extends Application {
 
     private static PrintWriter writer;
@@ -71,6 +73,7 @@ public class Client extends Application {
                 e -> {
                     Client.getWriter().println("QUIT");
                     Client.getWriter().flush();
+                    exit(0);
                 }
         );
 
