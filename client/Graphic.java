@@ -225,9 +225,15 @@ class Graphic {
                         vbox.getChildren().remove(1, vbox.getChildren().size());
                     }
                 }
-                for (String name : users) {
-                    Label label = new Label(name);
-                    vbox.getChildren().add(label);
+                if(users.length > 1){
+                    for (String name : users) {
+                        if(!name.equals(Client.getUsername())){
+                            Label label = new Label(name);
+                            vbox.getChildren().add(label);
+                        }
+                    }
+                } else{
+                    vbox.getChildren().add(new Label("You are alone"));
                 }
         }
     }
