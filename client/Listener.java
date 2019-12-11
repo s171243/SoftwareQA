@@ -65,13 +65,16 @@ class Listener extends Thread {
         //System.out.println("Message received: " + msg);
         msg = "*" + msg;
         Client.addMessages(msg);
-        Platform.runLater(() -> g.setUpCenter(Client.getMessages()));
+        // Platform.runLater(() -> g.setUpCenter(Client.getMessages()));
+        String finalMsg = msg;
+        Platform.runLater(() -> g.addMessageToPane(finalMsg));
     }
 
     private void pm(String msg) {
         msg = msg.replace("$r", "\r").replace("$n", "\n");
         Client.addMessages(msg);
-        Platform.runLater(() -> g.setUpCenter(Client.getMessages()));
+        String finalMsg = msg;
+        Platform.runLater(() -> g.addMessageToPane(finalMsg));
 
     }
 
@@ -96,12 +99,12 @@ class Listener extends Thread {
             Platform.runLater(() -> {
                 g.setUpBottom(finalList, Client.getUsername());
                 g.setUpRight(finalList);
-                g.setUpCenter(Client.getMessages());
+                //g.addMessageToPane(msg);
             });
         }
 
         if (Client.getMessages().size() != Client.getNumMessages()) {
-            Platform.runLater(() -> g.setUpCenter(Client.getMessages()));
+            // Platform.runLater(() -> g.setUpCenter());
 
             Client.incNumMessages();
         }

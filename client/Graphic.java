@@ -1,7 +1,9 @@
 package client;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -47,7 +49,7 @@ class Graphic {
         root = setUpRight(names);
 
         // center
-        root = setUpCenter(Client.getMessages());
+        root = setUpCenter();
 
         stage.setScene(new Scene(root, WIDTH, HEIGHT));
         stage.show();
@@ -176,9 +178,9 @@ class Graphic {
         if (bottomText.length() > 0) {
             if(value.equals("BROADCAST")){
                 bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
-                sendMessage(value + " " + bottomText);
+                sendMessage("HAIL" + " " + bottomText);
             } else {
-                Client.addMessages(Client.getUsername() + ":" + bottomText);
+                addMessageToPane(Client.getUsername() + ":" + bottomText);
                 bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
                 sendMessage("MESG " + value + " " + bottomText);
             }
@@ -213,26 +215,45 @@ class Graphic {
         return root;
     }
 
-    public BorderPane setUpCenter(LinkedList<String> messages) {
+    public void addMessageToPane(String message){
+        Node center = root.getCenter();
+        Label label = new Label(message);
+        label.setPadding(new Insets(2, 10, 2, 10));
+        label.setWrapText(true);
+        if(center instanceof ScrollPane){
+            System.out.println("IT is a ScrollPane!!!");
+            ScrollPane s = (ScrollPane) center;
+            Node v = s.getContent();
+            if (v instanceof VBox){
+                System.out.println("IT is a VBOX!!!");
+                VBox vBox = (VBox) v;
+                vBox.getChildren().add(label);
+            }
+            //s.getContent();
+        }
+    }
+
+    public BorderPane setUpCenter() {
         ScrollPane scroll = new ScrollPane();
         scroll.setFitToWidth(true);
         scroll.setPrefHeight(400);
 
         VBox center = new VBox(10);
-
+        center.setId("center");
         Label heading = new Label("Chat");
         heading.setStyle("-fx-font-weight: bold");
         heading.setPadding(new Insets(2, 10, 5, 10));
 
         center.getChildren().add(heading);
 
+        /*
         for (String message : messages) {
             Label label = new Label(message);
             label.setPadding(new Insets(2, 10, 2, 10));
             label.setWrapText(true);
             center.getChildren().add(label);
         }
-
+        */
         center.setPadding(new Insets(50, 10, 50, 20));
         scroll.setContent(center);
         scroll.setVvalue(1.0);
