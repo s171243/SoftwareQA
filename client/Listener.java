@@ -18,6 +18,7 @@ class Listener extends Thread {
     }
 
     private void validateMessage(String msg) {
+
         // receive
         if (msg.startsWith("Broadcast from")) {
             receive(msg.substring(14));

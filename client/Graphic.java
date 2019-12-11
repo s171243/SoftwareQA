@@ -80,8 +80,22 @@ class Graphic {
     public void topLoggedIn() {
         Label userName = new Label("Your username is:   " + Client.getUsername());
         userName.setPadding(new Insets(10, 10, 10, 10));
-        HBox topFrame = new HBox(1);
-        topFrame.getChildren().add(userName);
+        HBox topFrame = new HBox(2);
+
+        Button btn = new Button("Submit");
+        btn.setPrefWidth(BTN_WIDTH);
+        btn.setPrefHeight(BOTTOM_HEIGHT);
+
+        btn.setOnAction(e -> {
+            Client.setLoggedIn(false);
+            Client.getWriter().println("QUIT");
+            Client.getWriter().flush();
+            setUpTop();
+            setUpBottom();
+            Client.setUsername("");
+        });
+
+        topFrame.getChildren().addAll(userName, btn);
         root.setTop(topFrame);
     }
 
@@ -123,16 +137,7 @@ class Graphic {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.ENTER && keyEvent.isShiftDown())  {
-                    String value = user.getValue();
-                    String bottomText = bottom.getText().trim();
-                    if(bottomText.length() > 0) {
-                        Client.addMessages(Client.getUsername() + ":" + bottomText);
-                        bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
-                        sendMessage("MESG " + value + " " + bottomText);
-                        bottom.setText("");
-                    } else {
-                        bottom.setText("");
-                    }
+                    handleSubmit(user, bottom);
                 }
                 /*if (keyEvent.getCode() == KeyCode.ENTER && !keyEvent.isShiftDown())  {
                     bottom.setText(bottom.getText() + "\n");
@@ -141,21 +146,25 @@ class Graphic {
         });
 
         btn.setOnAction(e -> {
-            String value = user.getValue();
-            String bottomText = bottom.getText().trim();
-            if(bottomText.length() > 0) {
-                Client.addMessages(Client.getUsername() + ":" + bottomText);
-                bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
-                sendMessage("MESG " + value + " " + bottomText);
-                bottom.setText("");
-            } else {
-                bottom.setText("");
-            }
+            handleSubmit(user, bottom);
         });
 
         HBox bottomFrame = new HBox(2);
         bottomFrame.getChildren().addAll(user, bottom, btn);
         root.setBottom(bottomFrame);
+    }
+
+    private void handleSubmit(ComboBox<String> user, TextArea bottom) {
+        String value = user.getValue();
+        String bottomText = bottom.getText().trim();
+        if(bottomText.length() > 0) {
+            Client.addMessages(Client.getUsername() + ":" + bottomText);
+            bottomText = bottomText.replace("\r", "$r").replace("\n", "$n");
+            sendMessage("MESG " + value + " " + bottomText);
+            bottom.setText("");
+        } else {
+            bottom.setText("");
+        }
     }
 
     private void sendMessage(String msg) {
