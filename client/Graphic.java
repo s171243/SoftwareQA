@@ -1,65 +1,47 @@
 package client;
 
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-// import static jdk.internal.org.jline.terminal.Terminal.MouseTracking.Button;
-
 class Graphic {
 
-    private final Stage stage;
     private static BorderPane root = new BorderPane();
+    private final Stage stage;
     private final int WIDTH = 500;
-    private final int HEIGHT = 500;
     private final int BTN_WIDTH = 100;
     private final int BOTTOM_HEIGHT = 100;
     private final int TOP_HEIGHT = 50;
     private final int DROP_WIDTH = 100;
 
-
     Graphic(Stage primaryStage) {
         this.stage = primaryStage;
     }
 
-
     void setup() {
         stage.setTitle("Hello World!");
 
-        //bottom
         root = sendErrorMessage("You are not logged in - type your username above.");
-
-        //top
         root = setUpTop();
-
-        //right
-        String[] names = {"You're not logged in"};
         root = setUpRight();
-
-        // center
         root = setUpCenter();
 
+        int HEIGHT = 500;
         stage.setScene(new Scene(root, WIDTH, HEIGHT));
         stage.show();
     }
 
     private BorderPane setUpTop() {
-        //bottom
-        Button btn = new Button("Login");
-        btn.setPrefWidth(BTN_WIDTH);
-        btn.setPrefHeight(TOP_HEIGHT);
+        Button btn = createButton("Login", TOP_HEIGHT);
 
-        TextField top = new TextField();
+        TextField top = createTextField();
 
         top.setTextFormatter(new TextFormatter<>(change -> {
             if (change.getText().equals(" ")) {
@@ -69,20 +51,12 @@ class Graphic {
             return change;
         }));
 
-        top.setPrefWidth(WIDTH - BTN_WIDTH);
-        top.setPrefHeight(TOP_HEIGHT);
-        top.setPromptText("What is your username?");
-
         top.setOnAction(e -> {
-            sendMessage("IDEN " + top.getText());
-            top.setText("");
-            setUpRight();
+            handleMessage(top);
         });
 
         btn.setOnAction(e -> {
-            sendMessage("IDEN " + top.getText());
-            top.setText("");
-            setUpRight();
+            handleMessage(top);
         });
 
         HBox topFrame = new HBox(2);
@@ -91,22 +65,33 @@ class Graphic {
         return root;
     }
 
+    private TextField createTextField() {
+        TextField top = new TextField();
+        top.setPrefWidth(WIDTH - BTN_WIDTH);
+        top.setPrefHeight(TOP_HEIGHT);
+        top.setPromptText("What is your username?");
+        return top;
+    }
+
+    private void handleMessage(TextField top) {
+        sendMessage("IDEN " + top.getText());
+        top.setText("");
+        setUpRight();
+    }
+
     public void topLoggedIn() {
-        Label userName = new Label("Your username is:   " + Client.getUsername());
+        Label userName = createLabel();
         userName.setPadding(new Insets(10, 10, 10, 10));
-        userName.setPrefWidth(WIDTH - BTN_WIDTH);
         HBox topFrame = new HBox(2);
 
-        Button btn = new Button("Log out");
-        btn.setPrefWidth(BTN_WIDTH);
-        btn.setPrefHeight(TOP_HEIGHT);
+        Button btn = createButton("Log out", TOP_HEIGHT);
 
         btn.setOnAction(e -> {
             Client.setLoggedIn(false);
             Client.getWriter().println("QUIT");
             Client.getWriter().flush();
             setUpTop();
-            sendErrorMessage("You have been logged out succesfully");
+            sendErrorMessage("You have been logged out successfully");
             setUpRight();
 
             Client.setUsername("");
@@ -121,8 +106,18 @@ class Graphic {
         root.setTop(topFrame);
     }
 
-    public void addUserDropdown(String user) {
+    private Label createLabel() {
+        Label userName = new Label("Your username is:   " + Client.getUsername());
+        userName.setPrefHeight(TOP_HEIGHT);
+        userName.setPrefWidth(WIDTH - BTN_WIDTH);
+        return userName;
+    }
 
+    private Button createButton(String s, int top_height) {
+        Button btn = new Button(s);
+        btn.setPrefWidth(BTN_WIDTH);
+        btn.setPrefHeight(top_height);
+        return btn;
     }
 
     public BorderPane sendErrorMessage(String s) {
@@ -136,39 +131,40 @@ class Graphic {
 
     public void setUpBottom() {
         //bottom
-        Button btn = new Button("Submit");
-        btn.setPrefWidth(BTN_WIDTH);
-        btn.setPrefHeight(BOTTOM_HEIGHT);
+        Button btn = createButton("Submit", BOTTOM_HEIGHT);
 
-        TextArea bottom = new TextArea();
-        bottom.setPrefWidth(WIDTH - DROP_WIDTH - BTN_WIDTH);
-        bottom.setPrefHeight(BOTTOM_HEIGHT);
-        bottom.setPromptText("Write your message");
+        TextArea bottom = createTextArea();
 
-        ComboBox<String> user = new ComboBox<String>();
-        user.setPrefWidth(DROP_WIDTH);
-        user.setPrefHeight(BOTTOM_HEIGHT);
-        user.setPromptText("Recipient");
+        ComboBox<String> user = createComboBox();
         user.getItems().add("BROADCAST");
 
-        //user = populateComboBox(list, username, user);
-
-        bottom.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if (keyEvent.getCode() == KeyCode.ENTER && keyEvent.isControlDown()) {
-                    handleSubmit(user, bottom);
-                }
+        bottom.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER && keyEvent.isControlDown()) {
+                handleSubmit(user, bottom);
             }
         });
 
-        btn.setOnAction(e -> {
-            handleSubmit(user, bottom);
-        });
+        btn.setOnAction(e -> handleSubmit(user, bottom));
 
         HBox bottomFrame = new HBox(2);
         bottomFrame.getChildren().addAll(user, bottom, btn);
         root.setBottom(bottomFrame);
+    }
+
+    private ComboBox<String> createComboBox() {
+        ComboBox<String> user = new ComboBox<>();
+        user.setPrefWidth(DROP_WIDTH);
+        user.setPrefHeight(BOTTOM_HEIGHT);
+        user.setPromptText("Recipient");
+        return user;
+    }
+
+    private TextArea createTextArea() {
+        TextArea bottom = new TextArea();
+        bottom.setPrefWidth(WIDTH - DROP_WIDTH - BTN_WIDTH);
+        bottom.setPrefHeight(BOTTOM_HEIGHT);
+        bottom.setPromptText("Write your message");
+        return bottom;
     }
 
     public void populateComboBox(String[] list, String username) {
@@ -176,13 +172,10 @@ class Graphic {
         if (bottom instanceof HBox) {
             HBox h = (HBox) bottom;
             Node combo = h.getChildren().get(0);
-            if (combo instanceof ComboBox){
+            if (combo instanceof ComboBox) {
                 System.out.println("It IS a COMBOBOX!!!");
                 ComboBox<String> c = (ComboBox<String>) combo;
                 c.getItems().remove(1, c.getItems().size());
-                c.setPrefWidth(DROP_WIDTH);
-                c.setPrefHeight(BOTTOM_HEIGHT);
-
                 for (String recipient : list) {
                     if (!username.equals(recipient)) {
                         c.getItems().add(recipient);
@@ -192,7 +185,7 @@ class Graphic {
                     }
                 }
 
-                if(list.length == 1){
+                if (list.length == 1) {
                     c.setValue("BROADCAST");
                 }
             }
@@ -224,23 +217,23 @@ class Graphic {
 
     public void drawUserList(String[] users) {
         Node right = root.getRight();
-            if (right instanceof VBox) {
-                VBox vbox = (VBox) right;
-                for (String na : users) {
-                    if (vbox.getChildren().size() >= 2) {
-                        vbox.getChildren().remove(1, vbox.getChildren().size());
+        if (right instanceof VBox) {
+            VBox vbox = (VBox) right;
+            for (String na : users) {
+                if (vbox.getChildren().size() >= 2) {
+                    vbox.getChildren().remove(1, vbox.getChildren().size());
+                }
+            }
+            if (users.length > 1) {
+                for (String name : users) {
+                    if (!name.equals(Client.getUsername())) {
+                        Label label = new Label(name);
+                        vbox.getChildren().add(label);
                     }
                 }
-                if(users.length > 1){
-                    for (String name : users) {
-                        if(!name.equals(Client.getUsername())){
-                            Label label = new Label(name);
-                            vbox.getChildren().add(label);
-                        }
-                    }
-                } else{
-                    vbox.getChildren().add(new Label("You are alone"));
-                }
+            } else {
+                vbox.getChildren().add(new Label("You are alone"));
+            }
         }
     }
 
@@ -265,19 +258,16 @@ class Graphic {
         label.setPadding(new Insets(2, 10, 2, 10));
         label.setWrapText(true);
         if (center instanceof ScrollPane) {
-            System.out.println("IT is a ScrollPane!!!");
             ScrollPane s = (ScrollPane) center;
             Node v = s.getContent();
             if (v instanceof VBox) {
-                System.out.println("IT is a VBOX!!!");
                 VBox vBox = (VBox) v;
                 vBox.getChildren().add(label);
             }
-            //s.getContent();
         }
     }
 
-    public BorderPane setUpCenter() {
+    private BorderPane setUpCenter() {
         ScrollPane scroll = new ScrollPane();
         scroll.setFitToWidth(true);
         scroll.setPrefHeight(400);
@@ -290,14 +280,6 @@ class Graphic {
 
         center.getChildren().add(heading);
 
-        /*
-        for (String message : messages) {
-            Label label = new Label(message);
-            label.setPadding(new Insets(2, 10, 2, 10));
-            label.setWrapText(true);
-            center.getChildren().add(label);
-        }
-        */
         center.setPadding(new Insets(50, 10, 50, 20));
         scroll.setContent(center);
         scroll.setVvalue(1.0);

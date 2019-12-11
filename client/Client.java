@@ -1,30 +1,23 @@
 package client;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
+
 import java.io.*;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.LinkedList;
-
-import javafx.application.Application;
-import javafx.event.EventHandler;
-import javafx.stage.Stage;
 
 import static java.lang.System.exit;
 
 public class Client extends Application {
 
+    public static char separator = ((char) 007);
     private static PrintWriter writer;
     private static Boolean loggedIn = false;
-    private static final LinkedList<String> messages = new LinkedList<>();
-    private static String[] users;
     private static String username;
-    private static int numMessages = 0;
-    private static int sleepTime = 10;
     private static Listener listener;
     private static Sender sender;
-    public static char separator = ((char) 007);
 
     public static void main(String[] args) {
         launch(args);
@@ -34,62 +27,12 @@ public class Client extends Application {
         return writer;
     }
 
-    public static LinkedList<String> getMessages() {
-        return messages;
-    }
-
-    public static void addMessages(String message) {
-        Client.messages.add(message);
-    }
-
-    public static String[] getUsers() {
-        return users;
-    }
-
-    public static void setUsers(String[] users) {
-        Client.users = users;
-    }
-
     public static String getUsername() {
         return username;
     }
 
     public static void setUsername(String username) {
         Client.username = username;
-    }
-
-    public static int getNumMessages() {
-        return numMessages;
-    }
-
-    public static void incNumMessages() {
-        Client.numMessages++;
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        Graphic g = new Graphic(primaryStage);
-        primaryStage.setOnHiding(
-                e -> {
-                    Client.getWriter().println("QUIT");
-                    Client.getWriter().flush();
-                    exit(0);
-                }
-        );
-
-        g.setup();
-
-        while (true) {
-            try {
-                setupConnection(g);
-                break;
-            } catch (ConnectException e) {
-                System.out.println("The server is not online yet. Trying again in " + sleepTime + " seconds");
-                //Thread.sleep(sleepTime * 1000);
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        }
     }
 
     public static void restartConnection(Graphic g) throws IOException {
@@ -131,11 +74,42 @@ public class Client extends Application {
         sender.start();
     }
 
+    public static Boolean getLoggedIn() {
+        return loggedIn;
+    }
+
     public static void setLoggedIn(Boolean loggedIn) {
         Client.loggedIn = loggedIn;
     }
 
-    public static Boolean getLoggedIn() {
-        return loggedIn;
+    @Override
+    public void start(Stage primaryStage) {
+        Graphic g = new Graphic(primaryStage);
+        primaryStage.setOnHiding(
+                e -> {
+                    Client.getWriter().println("QUIT");
+                    Client.getWriter().flush();
+                    exit(0);
+                }
+        );
+
+        g.setup();
+
+        while (true) {
+            try {
+                setupConnection(g);
+                break;
+            } catch (ConnectException e) {
+                int sleepTime = 10;
+                g.sendErrorMessage("The server is not online yet. Trying again in " + sleepTime + " seconds");
+                try {
+                    Thread.sleep(sleepTime * 1000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

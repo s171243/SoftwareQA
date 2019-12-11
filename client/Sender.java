@@ -5,20 +5,14 @@ import java.io.PrintWriter;
 class Sender extends Thread {
 
     private final PrintWriter pw;
+    private boolean isRunning = true;
 
-    public boolean isRunning() {
-        return isRunning;
+    public Sender(PrintWriter pw) {
+        this.pw = pw;
     }
 
     public void setRunning(boolean running) {
         isRunning = running;
-    }
-
-    private boolean isRunning = true;
-
-    // Constructor
-    public Sender(PrintWriter pw) {
-        this.pw = pw;
     }
 
     @Override

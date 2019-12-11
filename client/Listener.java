@@ -10,21 +10,25 @@ class Listener extends Thread {
 
     private final Graphic g;
     private final BufferedReader br;
+    private String[] lastList = new String[5];
     private boolean isRunning = true;
-
-    public boolean isRunning() {
-        return isRunning;
-    }
-
-    public void setRunning(boolean running) {
-        isRunning = running;
-    }
-
 
     // Constructor
     public Listener(BufferedReader br, Graphic g) {
         this.br = br;
         this.g = g;
+    }
+
+    private static void connected() {
+        System.out.println("We are online");
+    }
+
+    private static void sent() {
+        System.out.println("Message sent");
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
     }
 
     private void validateMessage(String msg) {
@@ -52,9 +56,7 @@ class Listener extends Thread {
         } else if (msg.startsWith("OK your message has been sent")) {
             sent();
         } else if (msg.startsWith("BAD username is already taken")) {
-
             Platform.runLater(() -> g.sendErrorMessage("The username is already taken. Try again!"));
-
         } else {
             System.out.println("ehh... " + msg);
         }
@@ -62,31 +64,16 @@ class Listener extends Thread {
 
     // broadcast
     private void receive(String msg) {
-        //System.out.println("Message received: " + msg);
         msg = "*" + msg;
-        Client.addMessages(msg);
-        // Platform.runLater(() -> g.setUpCenter(Client.getMessages()));
         String finalMsg = msg;
         Platform.runLater(() -> g.addMessageToPane(finalMsg));
     }
 
     private void pm(String msg) {
         msg = msg.replace("$r", "\r").replace("$n", "\n");
-        Client.addMessages(msg);
         String finalMsg = msg;
         Platform.runLater(() -> g.addMessageToPane(finalMsg));
-
     }
-
-    private static void connected() {
-        System.out.println("We are online");
-    }
-
-    private static void sent() {
-        System.out.println("Message sent");
-    }
-
-    String[] lastList = new String[5];
 
     private void listing(String msg) {
         String[] list = msg.split(",");
@@ -94,20 +81,16 @@ class Listener extends Thread {
         for (int i = 0; i < list.length; i++) {
             list[i] = list[i].trim();
         }
-        // System.out.println(Arrays.toString(list));
+
         String[] finalList = list;
 
         if (!Arrays.equals(finalList, lastList)) {
             Platform.runLater(() -> {
                 g.populateComboBox(finalList, Client.getUsername());
-                //g.setUpRight();
                 g.drawUserList(finalList);
-                //g.addMessageToPane(msg);
             });
         }
 
-        Client.setUsers(finalList);
-        // g.setUpCenter(list);
         lastList = finalList;
     }
 
@@ -118,7 +101,6 @@ class Listener extends Thread {
         Platform.runLater(g::topLoggedIn);
         Platform.runLater(g::setUpRight);
         Platform.runLater(g::setUpBottom);
-
     }
 
     @Override
@@ -129,7 +111,6 @@ class Listener extends Thread {
                 if (response != null) {
                     validateMessage(response);
                 }
-                // System.out.println("Server : " + response);
             } catch (IOException e) {
                 System.out.println("The socket is down....");
                 try {
