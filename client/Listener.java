@@ -97,7 +97,7 @@ class Listener extends Thread {
         // System.out.println(Arrays.toString(list));
         String[] finalList = list;
 
-        if (!Arrays.equals(finalList, lastList)){
+        if (!Arrays.equals(finalList, lastList)) {
             Platform.runLater(() -> {
                 g.populateComboBox(finalList, Client.getUsername());
                 //g.setUpRight();
@@ -131,7 +131,13 @@ class Listener extends Thread {
                 }
                 // System.out.println("Server : " + response);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("The socket is down....");
+                try {
+                    Platform.runLater(() -> g.sendErrorMessage("The server is currently down. Please close the window and retry"));
+                    sleep(10000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }

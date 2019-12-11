@@ -2,6 +2,7 @@ package client;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -93,9 +94,10 @@ class Graphic {
     public void topLoggedIn() {
         Label userName = new Label("Your username is:   " + Client.getUsername());
         userName.setPadding(new Insets(10, 10, 10, 10));
+        userName.setPrefWidth(WIDTH - BTN_WIDTH);
         HBox topFrame = new HBox(2);
 
-        Button btn = new Button("Submit");
+        Button btn = new Button("Log out");
         btn.setPrefWidth(BTN_WIDTH);
         btn.setPrefHeight(TOP_HEIGHT);
 
@@ -188,6 +190,10 @@ class Graphic {
                             c.setValue(recipient);
                         }
                     }
+                }
+
+                if(list.length == 1){
+                    c.setValue("BROADCAST");
                 }
             }
         }
