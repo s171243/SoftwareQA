@@ -53,7 +53,7 @@ class Listener extends Thread {
             sent();
         } else if (msg.startsWith("BAD username is already taken")) {
 
-            Platform.runLater(() -> g.setUpBottom("The username is already taken. Try again!"));
+            Platform.runLater(() -> g.sendErrorMessage("The username is already taken. Try again!"));
 
         } else {
             System.out.println("ehh... " + msg);
@@ -99,7 +99,7 @@ class Listener extends Thread {
 
         if (!Arrays.equals(finalList, lastList)){
             Platform.runLater(() -> {
-                g.setUpBottom(finalList, Client.getUsername());
+                g.populateComboBox(finalList, Client.getUsername());
                 //g.setUpRight();
                 g.drawUserList(finalList);
                 //g.addMessageToPane(msg);
@@ -117,6 +117,8 @@ class Listener extends Thread {
         Client.setLoggedIn(true);
         Platform.runLater(g::topLoggedIn);
         Platform.runLater(g::setUpRight);
+        Platform.runLater(g::setUpBottom);
+
     }
 
     @Override

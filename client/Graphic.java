@@ -1,6 +1,5 @@
 package client;
 
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -13,8 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.security.Key;
-import java.util.LinkedList;
 
 // import static jdk.internal.org.jline.terminal.Terminal.MouseTracking.Button;
 
@@ -39,7 +36,7 @@ class Graphic {
         stage.setTitle("Hello World!");
 
         //bottom
-        root = setUpBottom("You are not logged in - type your username above.");
+        root = sendErrorMessage("You are not logged in - type your username above.");
 
         //top
         root = setUpTop();
@@ -65,7 +62,7 @@ class Graphic {
 
         top.setTextFormatter(new TextFormatter<>(change -> {
             if (change.getText().equals(" ")) {
-                setUpBottom("Your username should be 1 word - no spaces!");
+                sendErrorMessage("Your username should be 1 word - no spaces!");
                 change.setText("");
             }
             return change;
@@ -107,7 +104,7 @@ class Graphic {
             Client.getWriter().println("QUIT");
             Client.getWriter().flush();
             setUpTop();
-            setUpBottom("You have been logged out succesfully");
+            sendErrorMessage("You have been logged out succesfully");
             setUpRight();
 
             Client.setUsername("");
@@ -126,7 +123,7 @@ class Graphic {
 
     }
 
-    public BorderPane setUpBottom(String s) {
+    public BorderPane sendErrorMessage(String s) {
         Label heading = new Label(s);
         heading.setStyle("-fx-font-weight: bold");
         heading.setPadding(new Insets(10, 10, 10, 10));
@@ -135,7 +132,7 @@ class Graphic {
     }
 
 
-    public void setUpBottom(String[] list, String username) {
+    public void setUpBottom() {
         //bottom
         Button btn = new Button("Submit");
         btn.setPrefWidth(BTN_WIDTH);
@@ -146,20 +143,13 @@ class Graphic {
         bottom.setPrefHeight(BOTTOM_HEIGHT);
         bottom.setPromptText("Write your message");
 
-        ComboBox<String> user = new ComboBox<>();
+        ComboBox<String> user = new ComboBox<String>();
         user.setPrefWidth(DROP_WIDTH);
         user.setPrefHeight(BOTTOM_HEIGHT);
         user.setPromptText("Recipient");
         user.getItems().add("BROADCAST");
 
-        for (String recipient : list) {
-            if (!username.equals(recipient)) {
-                user.getItems().add(recipient);
-                if (list.length == 2) {
-                    user.setValue(recipient);
-                }
-            }
-        }
+        //user = populateComboBox(list, username, user);
 
         bottom.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -177,6 +167,30 @@ class Graphic {
         HBox bottomFrame = new HBox(2);
         bottomFrame.getChildren().addAll(user, bottom, btn);
         root.setBottom(bottomFrame);
+    }
+
+    public void populateComboBox(String[] list, String username) {
+        Node bottom = root.getBottom();
+        if (bottom instanceof HBox) {
+            HBox h = (HBox) bottom;
+            Node combo = h.getChildren().get(0);
+            if (combo instanceof ComboBox){
+                System.out.println("It IS a COMBOBOX!!!");
+                ComboBox<String> c = (ComboBox<String>) combo;
+                c.getItems().remove(1, c.getItems().size());
+                c.setPrefWidth(DROP_WIDTH);
+                c.setPrefHeight(BOTTOM_HEIGHT);
+
+                for (String recipient : list) {
+                    if (!username.equals(recipient)) {
+                        c.getItems().add(recipient);
+                        if (list.length == 2) {
+                            c.setValue(recipient);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void handleSubmit(ComboBox<String> user, TextArea bottom) {
