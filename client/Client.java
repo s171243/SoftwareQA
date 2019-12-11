@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 
 import javafx.application.Application;
@@ -18,7 +19,7 @@ public class Client extends Application {
     private static String username;
     private static int numMessages = 0;
     private static int sleepTime = 10;
-    public static char separator = ((char)007);
+    public static char separator = ((char) 007);
 
     public static void main(String[] args) {
         launch(args);
@@ -98,19 +99,13 @@ public class Client extends Application {
                 listener.start();
                 sender.start();
                 break;
-            } catch (ConnectException exception) {
+            } catch (ConnectException e) {
                 System.out.println("The server is not online yet. Trying again in " + sleepTime + " seconds");
-                try {
-                    Thread.sleep(sleepTime * 1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } catch (Exception exception) {
-                exception.printStackTrace();
+                //Thread.sleep(sleepTime * 1000);
+            } catch (Exception e){
+                e.printStackTrace();
             }
-
         }
-
     }
 
     public static void setLoggedIn(Boolean loggedIn) {
