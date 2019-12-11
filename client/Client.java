@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.stage.Stage;
 
 public class Client extends Application {
@@ -66,6 +67,13 @@ public class Client extends Application {
     @Override
     public void start(Stage primaryStage) {
         Graphic g = new Graphic(primaryStage);
+        primaryStage.setOnHiding(
+                e -> {
+                    Client.getWriter().println("QUIT");
+                    Client.getWriter().flush();
+                }
+        );
+
         g.setup();
 
         while (true) {
