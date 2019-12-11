@@ -219,10 +219,8 @@ class Graphic {
         Node right = root.getRight();
         if (right instanceof VBox) {
             VBox vbox = (VBox) right;
-            for (String na : users) {
-                if (vbox.getChildren().size() >= 2) {
-                    vbox.getChildren().remove(1, vbox.getChildren().size());
-                }
+            if (vbox.getChildren().size() >= 2) {
+                vbox.getChildren().remove(1, vbox.getChildren().size());
             }
             if (users.length > 1) {
                 for (String name : users) {
@@ -244,7 +242,6 @@ class Graphic {
 
         VBox vbox = new VBox(10);
         vbox.getChildren().add(heading);
-
         vbox.setPadding(new Insets(20, 10, 20, 20));
         vbox.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
 
@@ -274,6 +271,7 @@ class Graphic {
 
         VBox center = new VBox(10);
         center.setId("center");
+
         Label heading = new Label("Chat");
         heading.setStyle("-fx-font-weight: bold");
         heading.setPadding(new Insets(2, 10, 5, 10));
@@ -283,6 +281,7 @@ class Graphic {
         center.setPadding(new Insets(50, 10, 50, 20));
         scroll.setContent(center);
         scroll.setVvalue(1.0);
+
         root.setCenter(scroll);
         return root;
     }
