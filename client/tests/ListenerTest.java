@@ -1,5 +1,4 @@
-package client.tests;
-
+package client.test;
 
 import client.Client;
 import client.Graphic;
@@ -77,13 +76,12 @@ class ListenerTest {
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         Listener l = new Listener(br, new Graphic(stage));
-        /*assertEquals(l.validateMessage("OK, the following users are online christian"), "list");
+        assertEquals(l.validateMessage("OK, the following users are online christian"), "list");
         assertEquals(l.validateMessage("OK Welcome to the chat server abc"), "logged in");
         assertEquals(l.validateMessage("OK your message has been sent"), "sent");
         assertEquals(l.validateMessage(""), "");
         assertEquals(l.validateMessage("Broadcast from abc"), "broadcast");
         assertEquals(l.validateMessage("OK Welcome to the chat server, james"), "welcome");
-        assertEquals(l.validateMessage("PM from abc"), "pm");*/
+        assertEquals(l.validateMessage("PM from abc"), "pm");
     }
 }
-
