@@ -51,29 +51,39 @@ public class Listener extends Thread {
         }
     }
 
-    public void validateMessage(String msg) {
-
+    public String validateMessage(String msg) {
+        String result;
         if (msg.startsWith("Broadcast from")) {
-            receive(msg.substring(14));
+            receiveBroadcast(msg.substring(14));
+            result = "broadcast";
         } else if (msg.startsWith("OK Welcome to the chat server,")) {
             connected();
+            result = "connected";
         } else if (msg.startsWith("PM from")) {
             pm(msg.substring(8));
+            result = "pm";
         } else if (msg.startsWith("OK, the following users are online")) {
             listing(msg.substring(35));
+            result = "list";
         } else if (msg.startsWith("OK Welcome to the chat server")) {
             loggedIn(msg.substring(30));
+            result = "logged in";
         } else if (msg.startsWith("OK your message has been sent")) {
             sent();
+            result = "sent";
         } else if (msg.startsWith("BAD username is already taken")) {
             Platform.runLater(() -> g.sendErrorMessage("The username is already taken. Try again!"));
+            result = "username taken";
         } else {
             System.out.println("ehh... " + msg);
+            result = "not recognised";
         }
+
+        return result;
     }
 
     // broadcast
-    private void receive(String msg) {
+    private void receiveBroadcast(String msg) {
         msg = "*" + msg;
         String finalMsg = msg;
         if(Client.isLoggedIn()) Platform.runLater(() -> g.addMessageToPane(finalMsg));

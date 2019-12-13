@@ -14,7 +14,7 @@ import java.io.IOException;
 public class Graphic {
 
     private static BorderPane root = new BorderPane();
-    private final Stage stage;
+    public final Stage stage;
     private final int WIDTH = 500;
     private final int BTN_WIDTH = 100;
     private final int BOTTOM_HEIGHT = 100;
@@ -88,7 +88,7 @@ public class Graphic {
         return top;
     }
 
-    private void handleMessage(TextField top) {
+    void handleMessage(TextField top) {
         sendMessage("IDEN " + top.getText());
         top.setText("");
         setUpRight();
@@ -143,23 +143,27 @@ public class Graphic {
         Button btn = createButton("Log out", TOP_HEIGHT);
 
         btn.setOnAction(e -> {
-            Client.setLoggedIn(false);
-            Client.getWriter().println("QUIT");
-            Client.getWriter().flush();
-            setUpTop();
-            sendErrorMessage("You have been logged out successfully");
-            setUpRight();
-
-            Client.setUsername("");
-            try {
-                Client.restartConnection(this);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            logOutButton();
         });
 
         topFrame.getChildren().addAll(userName, btn);
         root.setTop(topFrame);
+    }
+
+    void logOutButton() {
+        Client.setLoggedIn(false);
+        Client.getWriter().println("QUIT");
+        Client.getWriter().flush();
+        setUpTop();
+        sendErrorMessage("You have been logged out successfully");
+        setUpRight();
+
+        Client.setUsername("");
+        try {
+            Client.restartConnection(this);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private Label createLabel() {

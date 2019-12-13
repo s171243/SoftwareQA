@@ -51,6 +51,7 @@ public class Connection implements Runnable {
     }
 
     private void validateMessage(String message) {
+        if (message == null) return;
         if (message.length() < 4) {
             System.out.println(message.length());
             sendOverConnection("BAD invalid command to server");

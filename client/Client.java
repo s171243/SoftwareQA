@@ -14,10 +14,28 @@ public class Client extends Application {
 
     public static char separator = ((char) 007);
     private static PrintWriter writer;
+
     private static Boolean loggedIn = false;
     private static String username;
+
+    public Listener getListener() {
+        return listener;
+    }
+
     private static Listener listener;
     private static Sender sender;
+    private static Socket socket;
+    private Graphic graphic;
+
+    public void setRunning(boolean running) {
+        isRunning = running;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    private boolean isRunning = true;
 
     public static void main(String[] args) {
         launch(args);
@@ -41,16 +59,18 @@ public class Client extends Application {
         String host = "localhost";
         int port = 9000;
         InetAddress address = InetAddress.getByName(host);
-        Socket socket = new Socket(address, port);
+        socket = new Socket(address, port);
 
         //Send the message to the server
         OutputStream os = socket.getOutputStream();
         OutputStreamWriter osw = new OutputStreamWriter(os);
         writer = new PrintWriter(osw);
 
+
         String sendMessage = "I am connected";
         writer.println(sendMessage);
         writer.flush();
+
 
         //Get the return message from the server
         InputStream is = socket.getInputStream();
@@ -78,9 +98,17 @@ public class Client extends Application {
         Client.loggedIn = loggedIn;
     }
 
+    public static PrintWriter getWriter() {
+        return writer;
+    }
+
+    public Graphic getGraphic() {
+        return graphic;
+    }
+
     @Override
     public void start(Stage primaryStage) {
-        Graphic g = new Graphic(primaryStage);
+        graphic = new Graphic(primaryStage);
         primaryStage.setOnHiding(
                 e -> {
                     Client.getWriter().println("QUIT");
@@ -89,15 +117,15 @@ public class Client extends Application {
                 }
         );
 
-        g.setup();
+        graphic.setup();
 
-        while (true) {
+        while (isRunning) {
             try {
-                setupConnection(g);
+                setupConnection(graphic);
                 break;
             } catch (ConnectException e) {
                 int sleepTime = 10;
-                g.sendErrorMessage("The server is not online yet. Trying again in " + sleepTime + " seconds");
+                graphic.sendErrorMessage("The server is not online yet. Trying again in " + sleepTime + " seconds");
                 try {
                     Thread.sleep(sleepTime * 1000);
                 } catch (InterruptedException ex) {
@@ -107,10 +135,12 @@ public class Client extends Application {
                 e.printStackTrace();
             }
         }
-    }
 
-    public static PrintWriter getWriter() {
-        return writer;
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

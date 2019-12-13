@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ServerTest {
+public class ServerTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -29,13 +29,8 @@ class ServerTest {
     @BeforeEach
     public void initialize() {
         runner = new ServerRunner(9000);
-        //System.setOut(new PrintStream(outContent));
         t = new Thread(runner);
         t.start();
-        //runner.run();
-        //this.runner.start();
-        // t = new Thread(runner);
-        // t.start();
     }
 
     @AfterEach

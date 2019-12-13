@@ -10,6 +10,10 @@ public class Runner
 	final static int PORT = 9000;
 	
 	public static void main(String[] args){
+	    start();
+	}
+
+	static void start(){
 		server = new Server(PORT);
 		server.start();
 	}
