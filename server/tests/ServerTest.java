@@ -9,12 +9,9 @@ import server.Server;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 
 import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ServerTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -22,52 +19,102 @@ class ServerTest {
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
     Server s;
-    private ServerRunner runner;
     Thread t;
+    private String sep = System.getProperty("line.separator");
+    private String initial = "Server has been initialised on port 9000" + sep;
+    private String probably = "A connection has probably been set up" + sep;
+    private ServerRunner runner;
 
     @BeforeEach
-    void initialize(){
-        this.runner = new ServerRunner(9000);
+    public void initialize() {
+        runner = new ServerRunner(9000);
         //System.setOut(new PrintStream(outContent));
+        t = new Thread(runner);
+        t.start();
+        //runner.run();
+        //this.runner.start();
         // t = new Thread(runner);
-        this.runner.start();
+        // t.start();
     }
 
     @AfterEach
-    void end() throws IOException {
-        //this.runner.getServer().quit();
+    public void end() throws IOException {
+        runner.quitServer();
     }
 
+
     @Test
-    void init() {
+    void init() throws IOException {
         try {
-            sleep(2000);
+            sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertEquals("Server has been initialised on port 9000", new String(outContent.toByteArray(), Charset.defaultCharset()));
+        assertEquals(initial, outContent.toString());
     }
 
     @Test
     void shouldConnect() throws IOException {
         initialiseClient();
         try {
-            sleep(2000);
+            sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertTrue(outContent.toString().contains("A connection has probably been set up"));
+        assertEquals(initial + probably + welcome(runner), outContent.toString());
+
     }
 
-    /*
-    
+    @Test
+    void shouldLogIn() throws IOException {
+        String username = "abc";
+        loginWithUsername(username);
+        assertEquals(initial + probably +
+                welcome(runner) +
+                "OK Welcome to the chat server " + username + sep, outContent.toString());
+    }
+
+    @Test
+    void shouldNotLogIn() throws IOException {
+        String username = "   ";
+        loginWithUsername(username);
+        assertEquals(initial + probably +
+                welcome(runner) +
+                "BAD command not recognised: IDEN" + username + " " + sep, outContent.toString());
+    }
+
+
+    private void loginWithUsername(String username) throws IOException {
+        PrintWriter i = initialiseClient();
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        i.println("IDEN " + username);
+        i.flush();
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String welcome(ServerRunner runner) {
+        return "OK Welcome to the chat server, there are currently "
+                + runner.getServer().getNumberOfUsers() + " user(s) online" + sep;
+    }
+
     @Test
     void getUserNumber() throws IOException {
         initialiseClient();
-        Assertions.assertEquals(0, runner.getServer().getNumberOfUsers());
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Assertions.assertEquals(1, runner.getServer().getNumberOfUsers());
     }
-
-     */
 
     private PrintWriter initialiseClient() throws IOException {
         String host = "localhost";
@@ -80,14 +127,14 @@ class ServerTest {
         OutputStreamWriter osw = new OutputStreamWriter(os);
         PrintWriter writer = new PrintWriter(osw);
 
-        String sendMessage = "I am connected";
-        writer.println(sendMessage);
-        writer.flush();
+        //String sendMessage = "I am connected";
+        //writer.println(sendMessage);
+        //writer.flush();
         return writer;
     }
 
 
-    class ServerRunner extends Thread {
+    class ServerRunner implements Runnable {
 
         private final int port;
         private Server server;
@@ -100,6 +147,11 @@ class ServerTest {
         public void run() {
             System.setOut(new PrintStream(outContent));
             this.server = new Server(port);
+            server.start();
+        }
+
+        public void quitServer() throws IOException {
+            server.quit();
         }
 
         public Server getServer() {

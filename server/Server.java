@@ -1,35 +1,45 @@
 package server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import static java.lang.Thread.sleep;
 
 
 public class Server {
 
-	private ServerSocket server;
+	public ServerSocket server;
 	private ArrayList<Connection> list;
-	
+	public boolean isRunning = true;
+
 	public Server (int port) {
 		try {
 			server = new ServerSocket(port);
 			System.out.println("Server has been initialised on port " + port);
-			System.out.println("test");
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			System.err.println("error initialising server");
 			e.printStackTrace();
 		}
+	}
+
+	public void start(){
 		list = new ArrayList<Connection>();
-		while(true) {
+		while(isRunning) {
 				Connection c = null;
 				try {
 					c = new Connection(server.accept(), this);
 					System.out.println("A connection has probably been set up");
 				}
+				catch(SocketException e){
+					continue;
+				}
 				catch (IOException e) {
-					System.err.println("error setting up new client conneciton");
+					System.err.println("error setting up new client connection");
 					e.printStackTrace();
 				}
 				Thread t = new Thread(c);
@@ -59,7 +69,7 @@ public class Server {
 	}
 	
 	public void broadcastMessage(String theMessage){
-		System.out.println(theMessage);
+		//System.out.println(theMessage);
 		for( Connection clientThread: list){
 			clientThread.messageForConnection(theMessage + System.lineSeparator());	
 		}
@@ -78,19 +88,18 @@ public class Server {
 	}
 	
 	public void removeDeadUsers(){
-		Iterator<Connection> it = list.iterator();
-		while (it.hasNext()) {
-			Connection c = it.next();
-			if(!c.isRunning())
-				it.remove();
-		}
+		list.removeIf(c -> !c.isRunning());
 	}
 	
 	public int getNumberOfUsers() {
 		return list.size();
 	}
-	
-	protected void finalize() throws IOException{
+
+	public void quit() throws IOException{
+		this.isRunning = false;
+		for(Connection c : list){
+			c.setRunning(false);
+		}
 		server.close();
 	}
 		
