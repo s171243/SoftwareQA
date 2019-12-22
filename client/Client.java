@@ -113,4 +113,12 @@ public class Client extends Application {
         return writer;
     }
 
+    public Sender getSender() {
+        return sender;
+    }
+
+    public Listener getListener() {
+        return listener;
+    }
+
 }

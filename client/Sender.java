@@ -2,7 +2,7 @@ package client;
 
 import java.io.PrintWriter;
 
-class Sender extends Thread {
+public class Sender extends Thread {
 
     private final PrintWriter pw;
     private boolean isRunning = true;
